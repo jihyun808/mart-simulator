@@ -1,7 +1,15 @@
-using UnityEngine;
-
-// 씬 간에 이전 씬 이름을 공유하기 위한 정적 클래스
+// SceneHistory.cs
 public static class SceneHistory
 {
-    public static string LastSceneName = "";
+    public static string LastSceneName { get; set; } = string.Empty;
+
+    public static void Clear()
+    {
+        LastSceneName = string.Empty;
+    }
+
+    public static bool HasHistory()
+    {
+        return !string.IsNullOrEmpty(LastSceneName);
+    }
 }

@@ -1,24 +1,32 @@
+// PickupableItem.cs
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class PickupableItem : MonoBehaviour
 {
-    [Header("아이템 정보")]
-    [SerializeField] private int itemSize = 1; // 아이템이 차지하는 용량
-    [SerializeField] private int itemValue = 0; // 아이템의 값
+    [Header("Item Info")]
+    [SerializeField] private int itemSize = 1;
+    [SerializeField] private int itemValue = 0;
     
     private Rigidbody rb;
     private Transform originalParent;
+    private Vector3 originalPosition;
+    private Quaternion originalRotation;
     private bool isCarried = false;
 
-    void Awake()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        originalParent = transform.parent;
+        originalPosition = transform.position;
+        originalRotation = transform.rotation;
     }
 
     public void PickUp(Transform hand)
     {
+        if (isCarried) return;
+
         isCarried = true;
-        originalParent = transform.parent;
         transform.SetParent(hand);
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
@@ -26,17 +34,21 @@ public class PickupableItem : MonoBehaviour
         if (rb != null)
         {
             rb.isKinematic = true;
+            rb.useGravity = false;
         }
     }
 
     public void Drop()
     {
+        if (!isCarried) return;
+
         isCarried = false;
         transform.SetParent(originalParent);
 
         if (rb != null)
         {
             rb.isKinematic = false;
+            rb.useGravity = true;
         }
     }
 
@@ -53,5 +65,14 @@ public class PickupableItem : MonoBehaviour
     public int GetItemValue()
     {
         return itemValue;
+    }
+
+    public void ResetToOriginalPosition()
+    {
+        if (isCarried) Drop();
+        
+        transform.SetParent(originalParent);
+        transform.position = originalPosition;
+        transform.rotation = originalRotation;
     }
 }

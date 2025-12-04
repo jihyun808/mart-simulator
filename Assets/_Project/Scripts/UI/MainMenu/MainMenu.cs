@@ -1,41 +1,48 @@
+// MainMenu.cs
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    [Header("이동할 씬 이름들")]
-    [SerializeField] private string gameSceneName     = "GameScene";      // 게임 플레이 씬
-    [SerializeField] private string settingsSceneName = "SettingsScene";  // 옵션/설정 씬
-    // [SerializeField] private string creditSceneName   = "CreditScene";    // 크레딧 씬
+    [Header("Scene Names")]
+    [SerializeField] private string gameSceneName = "GameScene";
+    [SerializeField] private string settingsSceneName = "SettingsScene";
 
-    // "게임 시작" 버튼
+    private void Start()
+    {
+        SetCursorState(true);
+        Time.timeScale = 1f;
+    }
+
     public void OnClickStartGame()
     {
-        SceneManager.LoadScene(gameSceneName);
+        SceneHistory.Clear();
+        LoadScene(gameSceneName);
     }
 
-    // "설정" 버튼
     public void OnClickSettings()
     {
-        // 설정 씬으로 넘어가기 전에 "지금 씬 이름" 기억해두기
         SceneHistory.LastSceneName = SceneManager.GetActiveScene().name;
-
-        SceneManager.LoadScene(settingsSceneName);
+        LoadScene(settingsSceneName);
     }
 
-    // "크레딧" 버튼
-    // public void OnClickCredit()
-    // {
-    //     SceneManager.LoadScene(creditSceneName);
-    // }
-
-    // 선택: 게임 종료 버튼 만들고 싶을 때
     public void OnClickQuit()
     {
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-    #else
+#else
         Application.Quit();
-    #endif
+#endif
+    }
+
+    private void LoadScene(string sceneName)
+    {
+        SceneManager.LoadScene(sceneName);
+    }
+
+    private void SetCursorState(bool visible)
+    {
+        Cursor.visible = visible;
+        Cursor.lockState = visible ? CursorLockMode.None : CursorLockMode.Locked;
     }
 }
