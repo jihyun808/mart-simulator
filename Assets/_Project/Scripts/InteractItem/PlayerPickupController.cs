@@ -1,3 +1,4 @@
+// PlayerPickupController.cs
 using UnityEngine;
 
 public class PlayerPickupController : MonoBehaviour
@@ -10,30 +11,40 @@ public class PlayerPickupController : MonoBehaviour
     private PickupableItem currentItem = null;
     private Camera cam;
     private Inventory inventory;
+    private InputHandler inputHandler;
 
-    void Start()
+    private void Start()
     {
         cam = Camera.main;
         inventory = GetComponent<Inventory>();
+        inputHandler = GetComponent<InputHandler>();
+        
         if (inventory == null)
         {
             inventory = gameObject.AddComponent<Inventory>();
         }
     }
 
-    void Update()
+    private void Update()
     {
-        // E를 눌러 인벤에 넣기
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            if (currentItem != null)
-            {
-                AddToInventory();
-            }
-        }
+        if (GameManager.GameIsPaused)
+            return;
 
-        // 마우스 우클릭으로 집기
-        if (Input.GetMouseButtonDown(1))
+        HandleInventoryInput();
+        HandlePickupInput();
+    }
+
+    private void HandleInventoryInput()
+    {
+        if (inputHandler != null && inputHandler.IsInteractPressed() && currentItem != null)
+        {
+            AddToInventory();
+        }
+    }
+
+    private void HandlePickupInput()
+    {
+        if (inputHandler != null && inputHandler.IsGrabPressed())
         {
             if (currentItem == null)
                 TryPickup();
@@ -42,13 +53,11 @@ public class PlayerPickupController : MonoBehaviour
         }
     }
 
-    void TryPickup()
+    private void TryPickup()
     {
         Ray centerRay = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
-        RaycastHit hit;
-        
-        if (Physics.Raycast(centerRay, out hit, pickupRange, pickupLayer))
+        if (Physics.Raycast(centerRay, out RaycastHit hit, pickupRange, pickupLayer))
         {
             PickupableItem item = hit.collider.GetComponent<PickupableItem>();
             if (item != null && !item.IsCarried())
@@ -59,7 +68,7 @@ public class PlayerPickupController : MonoBehaviour
         }
     }
 
-    void DropItem()
+    private void DropItem()
     {
         if (currentItem != null)
         {
@@ -68,12 +77,19 @@ public class PlayerPickupController : MonoBehaviour
         }
     }
 
-    void AddToInventory()
+    private void AddToInventory()
     {
         if (currentItem != null && inventory != null)
         {
-            inventory.AddItem(currentItem);
-            currentItem = null;
+            if (inventory.AddItem(currentItem))
+            {
+                currentItem = null;
+            }
         }
+    }
+
+    public PickupableItem GetCurrentItem()
+    {
+        return currentItem;
     }
 }

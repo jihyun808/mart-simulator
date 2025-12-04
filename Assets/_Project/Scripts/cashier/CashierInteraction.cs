@@ -1,15 +1,19 @@
+// CashierInteraction.cs
 using UnityEngine;
-using UnityEngine.Events;
 
 public class CashierInteraction : MonoBehaviour
 {
-    [Header("Quest check")]
+    [Header("Quest Check")]
     [SerializeField] private QuestItemChecker questChecker;
 
-    [Header("Interaction settings")]
-    [SerializeField] private KeyCode interactKey = KeyCode.E;
+    [Header("Interaction Settings")]
     [SerializeField] private float interactDistance = 3f;
     [SerializeField] private string cashierTag = "cashier";
+
+    [Header("Events")]
+    public System.Action OnQuestComplete;
+    public System.Action OnItemsMissing;
+    public System.Action OnValueExceeded;
 
     private Camera cam;
 
@@ -20,7 +24,10 @@ public class CashierInteraction : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(interactKey))
+        if (GameManager.GameIsPaused)
+            return;
+
+        if (Input.GetKeyDown(InputSettings.Keys[Action.Interact]))
         {
             TryInteractWithCashier();
         }
@@ -32,9 +39,8 @@ public class CashierInteraction : MonoBehaviour
             return;
 
         Ray centerRay = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
-        RaycastHit hit;
 
-        if (Physics.Raycast(centerRay, out hit, interactDistance))
+        if (Physics.Raycast(centerRay, out RaycastHit hit, interactDistance))
         {
             if (hit.collider.CompareTag(cashierTag))
             {
@@ -45,26 +51,23 @@ public class CashierInteraction : MonoBehaviour
 
     private void HandleCashierInteraction()
     {
-        // 1. 필요한 아이템을 모두 가지고 있는지 확인
         if (!questChecker.HasAllRequiredItems())
         {
-            Debug.Log("아이템 부족");
+            OnItemsMissing?.Invoke();
             return;
         }
 
-        // 2. 값 제한을 지키고 있는지 확인
         if (!questChecker.IsWithinValueLimit())
         {
-            Debug.Log("값 초과");
+            OnValueExceeded?.Invoke();
             return;
         }
 
-        // 모든 조건 만족 - 퀘스트 완료!
-        Debug.Log("퀘스트 완료!");
+        OnQuestComplete?.Invoke();
     }
 
     public bool CheckQuestStatus()
     {
-        return questChecker.IsQuestComplete();
+        return questChecker != null && questChecker.IsQuestComplete();
     }
 }

@@ -1,30 +1,26 @@
+// PlayerController.cs
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Input keyCodes")]
-    [SerializeField]
-    private KeyCode keyCodeRun = KeyCode.LeftShift; // 달리기 키
-    [SerializeField]
-    private KeyCode keyCodeJump = KeyCode.Space;    // 점프 키
-
-    private RotateToMouse rotateToMouse;   // 마우스 이동으로 카메라 회전
-    private MovementCharacterController movement; // 키보드 입력으로 플레이어 이동, 점프
+    private RotateToMouse rotateToMouse;
+    private MovementCharacterController movement;
     private Status status;
+    private InputHandler inputHandler;
 
     private void Awake()
     {
-        // 마우스 커서를 보이지 않게 설정하고, 현재 위치에 고정시킨다
-        Cursor.visible   = false;
-        Cursor.lockState = CursorLockMode.Locked;
-
         rotateToMouse = GetComponent<RotateToMouse>();
         movement = GetComponent<MovementCharacterController>();
         status = GetComponent<Status>();
+        inputHandler = GetComponent<InputHandler>();
     }
 
     private void Update()
     {
+        if (GameManager.GameIsPaused)
+            return;
+
         UpdateRotate();
         UpdateMove();
         UpdateJump();
@@ -32,33 +28,43 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateRotate()
     {
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
+        if (rotateToMouse == null || inputHandler == null) return;
 
-        rotateToMouse.UpdateRotate(mouseX, mouseY);
+        Vector2 mouseInput = inputHandler.GetMouseInput();
+        rotateToMouse.UpdateRotate(mouseInput.x, mouseInput.y);
     }
 
     private void UpdateMove()
     {
-        float x = Input.GetAxisRaw("Horizontal");
-        float z = Input.GetAxisRaw("Vertical");
+        if (movement == null || inputHandler == null) return;
 
-        // 이동중일때
-        if(x != 0 || z != 0)
+        Vector2 moveInput = inputHandler.GetMoveInput();
+        Vector3 dir = new Vector3(moveInput.x, 0f, moveInput.y);
+
+        if (dir.sqrMagnitude > 1f)
+            dir.Normalize();
+
+        float targetSpeed = 0f;
+
+        if (dir.sqrMagnitude > 0f && status != null)
         {
-            bool isRun = false;
-
-            if(z>0) isRun = Input.GetKey(keyCodeRun);
-
-            movement.MoveSpeed = isRun == true ? status.RunSpeed : status.WalkSpeed;
+            bool isRun = dir.z > 0f && inputHandler.IsRunning();
+            targetSpeed = isRun ? status.RunSpeed : status.WalkSpeed;
+        }
+        else if (status != null)
+        {
+            targetSpeed = status.WalkSpeed;
         }
 
-        movement.MoveTo(new Vector3(x, 0, z));
+        movement.MoveSpeed = targetSpeed;
+        movement.MoveTo(dir);
     }
 
     private void UpdateJump()
     {
-        if ( Input.GetKeyDown(keyCodeJump) )
+        if (movement == null || inputHandler == null) return;
+
+        if (inputHandler.IsJumpPressed())
         {
             movement.Jump();
         }
