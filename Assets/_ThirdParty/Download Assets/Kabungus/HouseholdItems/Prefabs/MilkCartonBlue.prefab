@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 8841578276289830865}
   - component: {fileID: -4407980182706036991}
   - component: {fileID: 5899716895165552845}
-  m_Layer: 0
+  - component: {fileID: 6868490261265378946}
+  m_Layer: 3
   m_Name: MilkCartonBlue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 6794386879215787435, guid: 199d563ea104d0448a487270a4cf4e63, type: 3}
+--- !u!114 &6868490261265378946
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7040081593506954756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: 0}

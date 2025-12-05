@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 4617462861792395328}
   - component: {fileID: -5473813788990261248}
   - component: {fileID: -4741485663880772739}
-  m_Layer: 0
+  - component: {fileID: 4984402074053844813}
+  m_Layer: 3
   m_Name: CupRed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4924078446816996869, guid: af5b0c10ece0761459a129c5bb6ca880, type: 3}
+--- !u!114 &4984402074053844813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6563005187535823253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: 0}

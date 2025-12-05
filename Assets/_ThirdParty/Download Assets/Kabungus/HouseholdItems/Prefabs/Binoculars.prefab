@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 4419711631430304418}
   - component: {fileID: 6646631646146508023}
   - component: {fileID: 6382766542657102533}
-  m_Layer: 0
+  - component: {fileID: 2238390228033869828}
+  m_Layer: 3
   m_Name: Binoculars
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 1187292857202364892, guid: a77e9c6471fcb1b4aa0210bd07053404, type: 3}
+--- !u!114 &2238390228033869828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2762118618844980087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: 0}
