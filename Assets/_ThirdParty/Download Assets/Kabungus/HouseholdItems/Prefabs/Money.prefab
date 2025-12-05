@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 450601811953768700}
   - component: {fileID: 6104398318064213258}
   - component: {fileID: 721046467424400817}
+  - component: {fileID: -1825133696275617708}
   m_Layer: 0
   m_Name: Money
   m_TagString: Untagged
@@ -137,3 +138,17 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -2929563531361107545, guid: 06175cfee688f5344a660f847b47fb85, type: 3}
+--- !u!114 &-1825133696275617708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2107728081518688553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1942442095431758488}
   - component: {fileID: 3116589094088395945}
   - component: {fileID: -3196373140721109942}
+  - component: {fileID: 8171171554855909533}
   m_Layer: 0
   m_Name: FastFoodCupGreen
   m_TagString: Untagged
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 2338021267492155569, guid: a2755a7d91fd4c847b80b09deb54ec58, type: 3}
+--- !u!114 &8171171554855909533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 140751487269999437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: -15382814, guid: 140dfccd923d15f4da6bae30f7235e8a, type: 3}

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 2073265944557062929}
   - component: {fileID: 9023215239759451249}
   - component: {fileID: -7814974349269365722}
+  - component: {fileID: -4408209319282153582}
   m_Layer: 0
   m_Name: Cup
   m_TagString: Untagged
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4119317738140548247, guid: cea22ea1125c1564f845ff91bdec70d7, type: 3}
+--- !u!114 &-4408209319282153582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 559928582987754180}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: 1080888993, guid: a20136ed8a6d1bd4bbe89180e723c2f2, type: 3}

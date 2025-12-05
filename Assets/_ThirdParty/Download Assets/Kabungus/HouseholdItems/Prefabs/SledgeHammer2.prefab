@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5785782413582157722}
   - component: {fileID: -695350858579567642}
   - component: {fileID: 1197482048472173086}
+  - component: {fileID: -8998919665022184026}
   m_Layer: 0
   m_Name: SledgeHammer2
   m_TagString: Untagged
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 6017680530046784047, guid: 35e118018193e934ba26c008aa81846f, type: 3}
+--- !u!114 &-8998919665022184026
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5425647893693064783}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: -602180955, guid: 3e518276d1df1d94d95e48b6e938c7ef, type: 3}

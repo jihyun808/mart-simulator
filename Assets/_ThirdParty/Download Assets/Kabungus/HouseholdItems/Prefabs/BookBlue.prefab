@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 3638195402570481649}
   - component: {fileID: -4901349717024209169}
   - component: {fileID: -8956171978221426188}
+  - component: {fileID: -6805736027484204602}
   m_Layer: 0
   m_Name: BookBlue
   m_TagString: Untagged
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8634471141056094855, guid: 77c514256d693e844b65d5771f60fdd7, type: 3}
+--- !u!114 &-6805736027484204602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2989698565783395876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: 1516430277, guid: 67473ddf70c6dde4c81127c242dbecaf, type: 3}

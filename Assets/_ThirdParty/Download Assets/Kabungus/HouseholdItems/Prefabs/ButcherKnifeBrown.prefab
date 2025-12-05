@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 5503275812449095536}
   - component: {fileID: 702681086979254892}
   - component: {fileID: -1765941160511813386}
+  - component: {fileID: -4260154348242578735}
   m_Layer: 0
   m_Name: ButcherKnifeBrown
   m_TagString: Untagged
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 2877141530099038405, guid: 49561a423806fb8468c53b4951791815, type: 3}
+--- !u!114 &-4260154348242578735
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6295869833345543845}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: -252419623, guid: 62b7d94ec0a6a4d46837b6e56aee98c0, type: 3}

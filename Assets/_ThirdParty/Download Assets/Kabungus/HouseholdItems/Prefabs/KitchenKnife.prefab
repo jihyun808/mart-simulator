@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 614866852211853807}
   - component: {fileID: 5492217077798756293}
   - component: {fileID: 6687788351662991935}
+  - component: {fileID: -8445318537918657594}
   m_Layer: 0
   m_Name: KitchenKnife
   m_TagString: Untagged
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7897084869254153977, guid: 03aa2203db556a8418140b52afe7b00c, type: 3}
+--- !u!114 &-8445318537918657594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1407531378218608698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: -1728714119, guid: 1643edf59230c654a8435314495601b2, type: 3}

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1412132441731221250}
   - component: {fileID: -5974617256965031017}
   - component: {fileID: -3035622645782342995}
+  - component: {fileID: -8585404533593250287}
   m_Layer: 0
   m_Name: TVStand
   m_TagString: Untagged
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4548611934908073349, guid: 03d128306848ffc48a08081f54f6a85e, type: 3}
+--- !u!114 &-8585404533593250287
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 619274126147610327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: 328040476, guid: 6d157d0dac798954086a5c18e510e9a7, type: 3}

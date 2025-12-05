@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 582552176935229715}
   - component: {fileID: 2304470827393760408}
   - component: {fileID: 258520673095644466}
+  - component: {fileID: -5943297394667022562}
   m_Layer: 0
   m_Name: Hatchet
   m_TagString: Untagged
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 1519899670696656113, guid: c3489ed0cb4476b429f04de9f89b0a6c, type: 3}
+--- !u!114 &-5943297394667022562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1375102492445341894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: -1086759612, guid: dd6f75da6b455e745815abb767f0ce0a, type: 3}

@@ -6,24 +6,21 @@ public class PlayerPickupController : MonoBehaviour
     [SerializeField] private Transform hand;
     [SerializeField] private float pickupRange = 3f;
     [SerializeField] private LayerMask pickupLayer;
-    
+
     private PickupableItem currentItem = null;
     private Camera cam;
-    private Inventory inventory;
+
+    // 🔥 추가: 인벤토리 UI 연결
+    [SerializeField] private InventoryUI inventoryUI;
 
     void Start()
     {
         cam = Camera.main;
-        inventory = GetComponent<Inventory>();
-        if (inventory == null)
-        {
-            inventory = gameObject.AddComponent<Inventory>();
-        }
     }
 
     void Update()
     {
-        // E를 눌러 인벤에 넣기
+        // E → 인벤토리 넣기
         if (Input.GetKeyDown(KeyCode.E))
         {
             if (currentItem != null)
@@ -32,7 +29,7 @@ public class PlayerPickupController : MonoBehaviour
             }
         }
 
-        // 마우스 우클릭으로 집기
+        // 우클릭 → 집기 / 놓기
         if (Input.GetMouseButtonDown(1))
         {
             if (currentItem == null)
@@ -46,9 +43,7 @@ public class PlayerPickupController : MonoBehaviour
     {
         Ray centerRay = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
 
-        RaycastHit hit;
-        
-        if (Physics.Raycast(centerRay, out hit, pickupRange, pickupLayer))
+        if (Physics.Raycast(centerRay, out RaycastHit hit, pickupRange, pickupLayer))
         {
             PickupableItem item = hit.collider.GetComponent<PickupableItem>();
             if (item != null && !item.IsCarried())
@@ -70,10 +65,19 @@ public class PlayerPickupController : MonoBehaviour
 
     void AddToInventory()
     {
-        if (currentItem != null && inventory != null)
+        if (currentItem == null) return;
+
+        // 🔥 UI 슬롯에 아이콘 추가
+        bool added = inventoryUI.AddItem(currentItem.ItemIcon);
+
+        if (added)
         {
-            inventory.AddItem(currentItem);
+            currentItem.gameObject.SetActive(false); // 물건 숨기기
             currentItem = null;
+        }
+        else
+        {
+            Debug.Log("인벤토리 슬롯이 가득 참!");
         }
     }
 }

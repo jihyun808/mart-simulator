@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 825654407253933980}
   - component: {fileID: 5770965546996056309}
   - component: {fileID: -2084142672963000586}
+  - component: {fileID: 692958729447824795}
   m_Layer: 0
   m_Name: ButcherKnife
   m_TagString: Untagged
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 5030455110879781644, guid: aa0687ec75352ff44aec1586d8afa2d6, type: 3}
+--- !u!114 &692958729447824795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1186043464089116233}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: 778405027, guid: 46b0870becbb0ed4592a8e25060e1661, type: 3}

@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8101367977256864389}
   - component: {fileID: 2375902034428793928}
   - component: {fileID: -8684124006914138025}
+  - component: {fileID: 8814262123398034725}
   m_Layer: 0
   m_Name: Bottle2Purple
   m_TagString: Untagged
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -4803834958506271272, guid: 159379b792012974cad43e278ff30f48, type: 3}
+--- !u!114 &8814262123398034725
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7740890822525152080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: -1521083173, guid: 68d11c39b1a43e141adf756e5b5727c7, type: 3}
