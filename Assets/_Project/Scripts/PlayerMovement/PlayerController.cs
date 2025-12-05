@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     private MovementCharacterController movement;
     private Status status;
     private InputHandler inputHandler;
+    private bool isCrouchToggled = false;
 
     private void Awake()
     {
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
         UpdateRotate();
         UpdateMove();
         UpdateJump();
+        UpdateCrouch();
     }
 
     private void UpdateRotate()
@@ -48,8 +50,15 @@ public class PlayerController : MonoBehaviour
 
         if (dir.sqrMagnitude > 0f && status != null)
         {
-            bool isRun = dir.z > 0f && inputHandler.IsRunning();
-            targetSpeed = isRun ? status.RunSpeed : status.WalkSpeed;
+            if (movement.IsCrouching)
+            {
+                targetSpeed = status.CrouchSpeed;
+            }
+            else
+            {
+                bool isRun = dir.z > 0f && inputHandler.IsRunning();
+                targetSpeed = isRun ? status.RunSpeed : status.WalkSpeed;
+            }
         }
         else if (status != null)
         {
@@ -67,6 +76,17 @@ public class PlayerController : MonoBehaviour
         if (inputHandler.IsJumpPressed())
         {
             movement.Jump();
+        }
+    }
+
+    private void UpdateCrouch()
+    {
+        if (movement == null || inputHandler == null) return;
+
+        if (inputHandler.IsCrouchPressed())
+        {
+            isCrouchToggled = !isCrouchToggled;
+            movement.SetCrouch(isCrouchToggled);
         }
     }
 }

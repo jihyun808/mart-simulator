@@ -26,7 +26,7 @@ public class InputHandler : MonoBehaviour
 
     public bool IsRunning() => Input.GetKey(InputSettings.Keys[Action.Run]);
     public bool IsJumpPressed() => Input.GetKeyDown(InputSettings.Keys[Action.Jump]);
-    public bool IsCrouchPressed() => Input.GetKey(InputSettings.Keys[Action.Crouch]);
+    public bool IsCrouchPressed() => Input.GetKeyDown(InputSettings.Keys[Action.Crouch]);
     public bool IsInteractPressed() => Input.GetKeyDown(InputSettings.Keys[Action.Interact]);
     public bool IsThrowPressed() => Input.GetKeyDown(InputSettings.Keys[Action.Throw]);
     public bool IsGrabPressed() => Input.GetKeyDown(InputSettings.Keys[Action.Grab]);
