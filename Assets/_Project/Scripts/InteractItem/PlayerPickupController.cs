@@ -92,4 +92,9 @@ public class PlayerPickupController : MonoBehaviour
     {
         return currentItem;
     }
+
+    public void ClearCurrentItem()
+    {
+        currentItem = null;
+    }
 }
