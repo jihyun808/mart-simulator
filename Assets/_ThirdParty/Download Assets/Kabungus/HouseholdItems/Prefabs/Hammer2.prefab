@@ -13,7 +13,9 @@ GameObject:
   - component: {fileID: 7940153126155055471}
   - component: {fileID: 3937079286806717406}
   - component: {fileID: 1133743541483758492}
-  m_Layer: 0
+  - component: {fileID: 3533550212280319111}
+  - component: {fileID: -5383151097511244754}
+  m_Layer: 3
   m_Name: Hammer2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,3 +139,32 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4081649620568318931, guid: 711d74a3645060e43b4c6c2cc20c54bd, type: 3}
+--- !u!114 &3533550212280319111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8444789449895858362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+--- !u!114 &-5383151097511244754
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8444789449895858362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

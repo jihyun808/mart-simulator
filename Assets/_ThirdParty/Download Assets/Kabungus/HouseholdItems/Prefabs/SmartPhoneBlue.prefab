@@ -13,7 +13,9 @@ GameObject:
   - component: {fileID: 2014440970405185547}
   - component: {fileID: 3268759384553660970}
   - component: {fileID: 3269593390949964512}
-  m_Layer: 0
+  - component: {fileID: 8306405451090143529}
+  - component: {fileID: 515480437344678577}
+  m_Layer: 3
   m_Name: SmartPhoneBlue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,3 +139,32 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -667378291169968554, guid: 8e2067e9391ba0340be613d24391da10, type: 3}
+--- !u!114 &8306405451090143529
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 68758043584702942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+--- !u!114 &515480437344678577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 68758043584702942}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

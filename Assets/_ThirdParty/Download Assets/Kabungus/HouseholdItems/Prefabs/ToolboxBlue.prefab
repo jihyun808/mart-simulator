@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5761995153500678845}
   - component: {fileID: 7408552818856861849}
   - component: {fileID: 6962363884123373163}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ToolBoxBottom.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 155364425983130521}
   - component: {fileID: 9148353626239477124}
   - component: {fileID: 3391762399225978889}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ToolBoxTop.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -183,7 +183,9 @@ GameObject:
   - component: {fileID: 8660095685457370586}
   - component: {fileID: 8140887414368619238}
   - component: {fileID: 1080924127424906806}
-  m_Layer: 0
+  - component: {fileID: -1114852550350470616}
+  - component: {fileID: 3909403820137704865}
+  m_Layer: 3
   m_Name: ToolboxBlue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -256,3 +258,32 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &-1114852550350470616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8315060568077895520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+--- !u!114 &3909403820137704865
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8315060568077895520}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

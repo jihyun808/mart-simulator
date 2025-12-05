@@ -13,7 +13,9 @@ GameObject:
   - component: {fileID: 5878054492337190247}
   - component: {fileID: -2825452261024840319}
   - component: {fileID: 2649602541222073478}
-  m_Layer: 0
+  - component: {fileID: 3077555653905870703}
+  - component: {fileID: 649971007236773734}
+  m_Layer: 3
   m_Name: SmartPhoneRed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,3 +139,32 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -2114345425870133768, guid: 28eb9a45e5f433341968dea07ca7f7de, type: 3}
+--- !u!114 &3077555653905870703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5373910474990163122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+--- !u!114 &649971007236773734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5373910474990163122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

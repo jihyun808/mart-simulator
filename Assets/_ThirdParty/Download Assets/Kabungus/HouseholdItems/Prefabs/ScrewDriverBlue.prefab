@@ -13,7 +13,9 @@ GameObject:
   - component: {fileID: 1316420714574139461}
   - component: {fileID: 7959324068493532099}
   - component: {fileID: -4773470000010999401}
-  m_Layer: 0
+  - component: {fileID: 8159824519122932537}
+  - component: {fileID: -3872509592028419790}
+  m_Layer: 3
   m_Name: ScrewDriverBlue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,3 +139,32 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -708921371580726158, guid: 82c5bf8db4f44694a9f60476aad774e8, type: 3}
+--- !u!114 &8159824519122932537
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667695867050324368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+--- !u!114 &-3872509592028419790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 667695867050324368}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1
