@@ -6,11 +6,14 @@ public class PickupableItem : MonoBehaviour
     [SerializeField] private int itemSize = 1;
     [SerializeField] private int itemValue = 0;
 
-    Rigidbody rb;
-    Transform originalParent;
-    Vector3 originalPosition;
-    Quaternion originalRotation;
-    bool isCarried = false;
+    [Header("Inventory Icon")]
+    public Sprite itemIcon; // ⭐ 인벤토리 아이콘 추가
+    
+    private Rigidbody rb;
+    private Transform originalParent;
+    private Vector3 originalPosition;
+    private Quaternion originalRotation;
+    private bool isCarried = false;
 
     float _lastDroppedTime = -999f;
     public float justDroppedWindow = 0.6f;
