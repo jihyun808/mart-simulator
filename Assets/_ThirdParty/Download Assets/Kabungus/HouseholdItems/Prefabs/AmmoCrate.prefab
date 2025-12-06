@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 3360700321567555051}
   - component: {fileID: -1463600861878544567}
   - component: {fileID: -1261348527361032987}
-  m_Layer: 0
+  - component: {fileID: -5612931545582187001}
+  m_Layer: 3
   m_Name: AmmoCrate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 6819384773447010166, guid: d2db2cc555fcf5246bfdb5ded9dd4647, type: 3}
+--- !u!114 &-5612931545582187001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3865046510475189310}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: 0}

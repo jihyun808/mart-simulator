@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 2582570020702011657}
   - component: {fileID: 2285681505562629019}
   - component: {fileID: 611675833723670335}
-  m_Layer: 0
+  - component: {fileID: -3582551017306965144}
+  m_Layer: 3
   m_Name: Mug
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -7219886339314900476, guid: 38c928c4da6a2564fa142dd6ce356b1b, type: 3}
+--- !u!114 &-3582551017306965144
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4095986134187499740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: 0}

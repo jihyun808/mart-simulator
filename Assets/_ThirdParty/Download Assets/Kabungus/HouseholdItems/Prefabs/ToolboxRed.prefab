@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8747966813630628896}
   - component: {fileID: 3374790384706160142}
   - component: {fileID: 227582565826017299}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ToolBoxBottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,8 @@ GameObject:
   - component: {fileID: 3997027115961862880}
   - component: {fileID: -5708513853357054712}
   - component: {fileID: -7350136120470589842}
-  m_Layer: 0
+  - component: {fileID: -365155258888326941}
+  m_Layer: 3
   m_Name: ToolboxRed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -170,6 +171,21 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &-365155258888326941
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4337980536727441498}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: 0}
 --- !u!1 &8971902320458703412
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,7 +197,7 @@ GameObject:
   - component: {fileID: 1797552135026362562}
   - component: {fileID: 3735650478296609723}
   - component: {fileID: 7075972138700448994}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: ToolBoxTop
   m_TagString: Untagged
   m_Icon: {fileID: 0}

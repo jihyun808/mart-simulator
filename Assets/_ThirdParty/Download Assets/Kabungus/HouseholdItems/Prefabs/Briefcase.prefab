@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 3494801414205721725}
   - component: {fileID: -2809026014869576907}
   - component: {fileID: -7018788511325400932}
-  m_Layer: 0
+  - component: {fileID: -2549325971854712407}
+  m_Layer: 3
   m_Name: Briefcase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,3 +138,18 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 6610462251100039002, guid: 224bf7a6e33f8a24cb82701faf3b737b, type: 3}
+--- !u!114 &-2549325971854712407
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3134781517799910824}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: 0}
