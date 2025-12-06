@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 3638195402570481649}
   - component: {fileID: -4901349717024209169}
   - component: {fileID: -8956171978221426188}
-  - component: {fileID: 3359244503469960165}
+  - component: {fileID: 5349191146160490549}
+  - component: {fileID: -5582940160197407995}
   m_Layer: 3
   m_Name: BookBlue
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8634471141056094855, guid: 77c514256d693e844b65d5771f60fdd7, type: 3}
---- !u!114 &3359244503469960165
+--- !u!114 &5349191146160490549
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,4 +153,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSize: 1
   itemValue: 0
-  itemIcon: {fileID: 0}
+--- !u!114 &-5582940160197407995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2989698565783395876}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 628001443711666185}
   - component: {fileID: -8006560459173439484}
   - component: {fileID: -7168715130396421463}
-  - component: {fileID: 5569374169185674944}
+  - component: {fileID: 7794793284434359912}
+  - component: {fileID: -2879310499894219977}
   m_Layer: 3
   m_Name: Bowl
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 477525350536967170, guid: 971a90db28f0cd2408669534a8188013, type: 3}
---- !u!114 &5569374169185674944
+--- !u!114 &7794793284434359912
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,4 +153,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSize: 1
   itemValue: 0
-  itemIcon: {fileID: 0}
+--- !u!114 &-2879310499894219977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1420858797759556060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

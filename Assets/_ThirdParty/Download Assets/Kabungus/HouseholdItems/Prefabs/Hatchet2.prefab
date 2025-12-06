@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 5175297693385698327}
   - component: {fileID: -1338804376672409138}
   - component: {fileID: 1828883727638697800}
-  - component: {fileID: 5349752871720200716}
+  - component: {fileID: -5430681395440454596}
+  - component: {fileID: -7128865767361731324}
   m_Layer: 3
   m_Name: Hatchet2
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 1241147124705486039, guid: a8a4d20ce77d57145937695d1c21eef2, type: 3}
---- !u!114 &5349752871720200716
+--- !u!114 &-5430681395440454596
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,4 +153,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSize: 1
   itemValue: 0
-  itemIcon: {fileID: 0}
+--- !u!114 &-7128865767361731324
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6688590525685599682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

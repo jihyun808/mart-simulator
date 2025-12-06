@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 3956457709415516716}
   - component: {fileID: 934737366113017814}
   - component: {fileID: 2096926224615095357}
-  - component: {fileID: 6846162396100601498}
+  - component: {fileID: -6769461558783857637}
+  - component: {fileID: 9190769232106857601}
   m_Layer: 3
   m_Name: GasCan
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 5730884998739244751, guid: f1b3aa88dc1fd4647a8999fbb3a53951, type: 3}
---- !u!114 &6846162396100601498
+--- !u!114 &-6769461558783857637
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,4 +153,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSize: 1
   itemValue: 0
-  itemIcon: {fileID: 0}
+--- !u!114 &9190769232106857601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3308128273212304377}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

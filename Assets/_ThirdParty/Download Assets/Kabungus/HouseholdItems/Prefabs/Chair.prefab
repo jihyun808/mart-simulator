@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 126360854164488232}
   - component: {fileID: -2346139087283820901}
   - component: {fileID: 2055572868006563401}
-  - component: {fileID: 320307546617227711}
+  - component: {fileID: -3214612582772690953}
+  - component: {fileID: -6999828616240976347}
   m_Layer: 3
   m_Name: Chair
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -6264831526926562434, guid: 7c4994a3755c2734aa3021de1e5b42fd, type: 3}
---- !u!114 &320307546617227711
+--- !u!114 &-3214612582772690953
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,4 +153,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSize: 1
   itemValue: 0
-  itemIcon: {fileID: 0}
+--- !u!114 &-6999828616240976347
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1927559294485717501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 5887760342578925617}
   - component: {fileID: 822893640365475590}
   - component: {fileID: 5493752365672194156}
-  - component: {fileID: -7247723929286860240}
+  - component: {fileID: 8365160349709008591}
+  - component: {fileID: 196827856816192229}
   m_Layer: 3
   m_Name: FastFoodCupRed
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 442869171371876074, guid: 7a96eff1648e86445b9006ae68966fef, type: 3}
---- !u!114 &-7247723929286860240
+--- !u!114 &8365160349709008591
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,4 +153,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSize: 1
   itemValue: 0
-  itemIcon: {fileID: 0}
+--- !u!114 &196827856816192229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5383343783119368676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

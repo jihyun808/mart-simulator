@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 4889042007155409181}
   - component: {fileID: 4271036846145017333}
   - component: {fileID: -2888086579006016433}
-  - component: {fileID: 409049261836375570}
+  - component: {fileID: 6454125242042753631}
+  - component: {fileID: -8515833360469419234}
   m_Layer: 3
   m_Name: BeerMug
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 5710817482946051779, guid: 49fd60892425cef43a3718e2e547e759, type: 3}
---- !u!114 &409049261836375570
+--- !u!114 &6454125242042753631
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,4 +153,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSize: 1
   itemValue: 0
-  itemIcon: {fileID: 0}
+--- !u!114 &-8515833360469419234
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6402326179861864648}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

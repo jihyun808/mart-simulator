@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 1620260041759782968}
   - component: {fileID: 3705440233425078531}
   - component: {fileID: -4827676179826276347}
-  - component: {fileID: 1754245437033444629}
+  - component: {fileID: -6165044686667986979}
+  - component: {fileID: -4535227451185669488}
   m_Layer: 3
   m_Name: SmartPhoneWhite
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -474763866259076170, guid: daa587e242c9fb442badb9e5d02af889, type: 3}
---- !u!114 &1754245437033444629
+--- !u!114 &-6165044686667986979
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,4 +153,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSize: 1
   itemValue: 0
-  itemIcon: {fileID: 0}
+--- !u!114 &-4535227451185669488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 971842506716502509}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

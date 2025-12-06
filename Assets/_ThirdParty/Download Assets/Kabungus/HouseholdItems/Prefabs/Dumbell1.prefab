@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 3650369333859543604}
   - component: {fileID: -1893173207420452694}
   - component: {fileID: 8969789649779324019}
-  - component: {fileID: 8420239251050259476}
+  - component: {fileID: 8191051887399926910}
+  - component: {fileID: 5714585559427324109}
   m_Layer: 3
   m_Name: Dumbell1
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 7845688114071678188, guid: 5dfdfe460a3ef724eb29ce5e47002033, type: 3}
---- !u!114 &8420239251050259476
+--- !u!114 &8191051887399926910
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,4 +153,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSize: 1
   itemValue: 0
-  itemIcon: {fileID: 0}
+--- !u!114 &5714585559427324109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3001732584150584289}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

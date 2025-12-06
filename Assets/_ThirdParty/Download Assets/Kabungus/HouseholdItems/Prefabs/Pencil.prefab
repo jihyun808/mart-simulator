@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 8665175997259211970}
   - component: {fileID: -2439026917101249118}
   - component: {fileID: -5611963411117764917}
-  - component: {fileID: -2445886513374932952}
+  - component: {fileID: 1496989597574309065}
+  - component: {fileID: -5308621468675798610}
   m_Layer: 3
   m_Name: Pencil
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -6561623048535504736, guid: f01bbbba18169ee45a46e36fe3cbc1f8, type: 3}
---- !u!114 &-2445886513374932952
+--- !u!114 &1496989597574309065
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,4 +153,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSize: 1
   itemValue: 0
-  itemIcon: {fileID: 0}
+--- !u!114 &-5308621468675798610
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7151751224701732119}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1

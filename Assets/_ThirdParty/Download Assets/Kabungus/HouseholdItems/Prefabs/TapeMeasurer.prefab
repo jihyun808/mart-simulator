@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 9201920220577958373}
   - component: {fileID: -2827922095180015873}
   - component: {fileID: 9073892828139905421}
-  - component: {fileID: -3551687619715013491}
+  - component: {fileID: 5407014287150607615}
+  - component: {fileID: -1667095876409523198}
   m_Layer: 3
   m_Name: TapeMeasurer
   m_TagString: Untagged
@@ -138,7 +139,7 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 8460152975756115013, guid: 8a4aa8011446a5d409ec1e4d3549b583, type: 3}
---- !u!114 &-3551687619715013491
+--- !u!114 &5407014287150607615
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -152,4 +153,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSize: 1
   itemValue: 0
-  itemIcon: {fileID: 0}
+--- !u!114 &-1667095876409523198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7256202660706461744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 186f5aa90ee11bd4b8b503813e6212fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  capacityCost: 1
+  usePickupSize: 1
+  lockRotationWhenLoaded: 1
