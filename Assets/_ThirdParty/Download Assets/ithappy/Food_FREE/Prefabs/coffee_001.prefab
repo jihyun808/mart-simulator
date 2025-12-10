@@ -163,8 +163,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemName: "\uCEE4\uD53C"
   itemSize: 1
   itemValue: 0
+  itemIcon: {fileID: 1027382336, guid: 6465bafb0309adc4cb5038e59649cb3d, type: 3}
+  justDroppedWindow: 0.6
 --- !u!114 &5372914095201432406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -178,4 +181,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   capacityCost: 1
-  lockRotationWhenLoaded: 1
+  usePickupSize: 1

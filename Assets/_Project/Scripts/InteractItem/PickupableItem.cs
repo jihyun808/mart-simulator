@@ -3,12 +3,14 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PickupableItem : MonoBehaviour
 {
+    [Header("Item Info")]
+    public string itemName;       // ⭐ 스테이지 요구사항과 비교할 이름
     [SerializeField] private int itemSize = 1;
     [SerializeField] private int itemValue = 0;
 
     [Header("Inventory Icon")]
-    public Sprite itemIcon; // ⭐ 인벤토리 아이콘 추가
-    
+    public Sprite itemIcon;       // 인벤토리 아이콘
+
     private Rigidbody rb;
     private Transform originalParent;
     private Vector3 originalPosition;
@@ -37,14 +39,21 @@ public class PickupableItem : MonoBehaviour
         if (isCarried) return;
         isCarried = true;
 
-        // ▶ 들고 있는 동안은 CarriedItem 레이어로 변경
-        if (_carriedLayer != -1) gameObject.layer = _carriedLayer;
+        // ▶ 들고 있는 동안 CarriedItem 레이어로 변경
+        if (_carriedLayer != -1) 
+            gameObject.layer = _carriedLayer;
 
         transform.SetParent(hand);
         transform.localPosition = Vector3.zero;
         transform.localRotation = Quaternion.identity;
 
-        if (rb) { rb.isKinematic = true; rb.useGravity = false; rb.linearVelocity = Vector3.zero; rb.angularVelocity = Vector3.zero; }
+        if (rb)
+        {
+            rb.isKinematic = true;
+            rb.useGravity = false;
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
     }
 
     public void Drop()
@@ -53,12 +62,18 @@ public class PickupableItem : MonoBehaviour
         isCarried = false;
 
         transform.SetParent(originalParent);
-        if (rb) { rb.isKinematic = false; rb.useGravity = true; }
 
-        // ▶ 드롭한 즉시 원래 레이어로 복귀(카트가 감지할 수 있게)
-        if (_pickupLayer != -1) gameObject.layer = _pickupLayer;
+        if (rb)
+        {
+            rb.isKinematic = false;
+            rb.useGravity = true;
+        }
 
-        _lastDroppedTime = Time.time; // 방금 드롭 기록
+        // ▶ 드롭 즉시 다시 PickupableItem 레이어로 복귀
+        if (_pickupLayer != -1) 
+            gameObject.layer = _pickupLayer;
+
+        _lastDroppedTime = Time.time;
     }
 
     public bool IsCarried() => isCarried;
@@ -74,6 +89,7 @@ public class PickupableItem : MonoBehaviour
     public void ResetToOriginalPosition()
     {
         if (isCarried) Drop();
+
         transform.SetParent(originalParent);
         transform.position = originalPosition;
         transform.rotation = originalRotation;
