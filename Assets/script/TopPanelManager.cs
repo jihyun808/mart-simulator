@@ -40,8 +40,33 @@ public class TopPanelManager : MonoBehaviour
         else
         {
             currentTime = 0;
-            // TODO: 시간 끝났을 때 게임오버 처리
+            // TODO: 시간 끝난 경우 처리
         }
+    }
+
+    // ------------------------------
+    //   💰 Money 관련 함수들
+    // ------------------------------
+
+    public int GetCurrentBudget()
+    {
+        return currentMoney;
+    }
+
+    public bool CanAfford(int cost)
+    {
+        return currentMoney >= cost;
+    }
+
+    public bool Spend(int cost)
+    {
+        if (currentMoney >= cost)
+        {
+            currentMoney -= cost;
+            moneyText.text = "$" + currentMoney;
+            return true;
+        }
+        return false;
     }
 
     public void AddMoney(int amount)
@@ -50,16 +75,9 @@ public class TopPanelManager : MonoBehaviour
         moneyText.text = "$" + currentMoney;
     }
 
-    public bool SpendMoney(int amount)
-    {
-        if (currentMoney >= amount)
-        {
-            currentMoney -= amount;
-            moneyText.text = "$" + currentMoney;
-            return true;
-        }
-        return false;
-    }
+    // ------------------------------
+    //   🎒 Bag & Cart 관련 함수들
+    // ------------------------------
 
     public void AddToBag()
     {
@@ -72,6 +90,10 @@ public class TopPanelManager : MonoBehaviour
         currentCart++;
         cartText.text = currentCart + "/" + maxCart;
     }
+
+    // ------------------------------
+    //   🎛 UI 초기 업데이트
+    // ------------------------------
 
     private void UpdateUI()
     {

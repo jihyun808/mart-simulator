@@ -6,6 +6,8 @@ public class CashierTriggerZone : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("🔥 Trigger 감지됨: " + other.name);
+
         if (!other.CompareTag("Player")) return;
 
         Debug.Log("Player entered cashier zone");

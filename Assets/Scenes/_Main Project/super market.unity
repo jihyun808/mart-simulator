@@ -3059,7 +3059,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2306769892806513762, guid: be6cb4f0791ad3a4a80b41c3177f0aba, type: 3}
       propertyPath: m_Name
-      value: npc_csl_00_character_02f_03
+      value: cashier
       objectReference: {fileID: 0}
     - target: {fileID: 2306769892806513762, guid: be6cb4f0791ad3a4a80b41c3177f0aba, type: 3}
       propertyPath: m_Layer
@@ -3699,13 +3699,16 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 2306769892806513762, guid: be6cb4f0791ad3a4a80b41c3177f0aba, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 214279093}
-    - targetCorrespondingSourceObject: {fileID: 2306769892806513762, guid: be6cb4f0791ad3a4a80b41c3177f0aba, type: 3}
-      insertIndex: -1
       addedObject: {fileID: 214279092}
     - targetCorrespondingSourceObject: {fileID: 2306769892806513762, guid: be6cb4f0791ad3a4a80b41c3177f0aba, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 214279095}
+      addedObject: {fileID: 214279099}
+    - targetCorrespondingSourceObject: {fileID: 2306769892806513762, guid: be6cb4f0791ad3a4a80b41c3177f0aba, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 214279103}
+    - targetCorrespondingSourceObject: {fileID: 2306769892806513762, guid: be6cb4f0791ad3a4a80b41c3177f0aba, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 214279104}
   m_SourcePrefab: {fileID: 100100000, guid: be6cb4f0791ad3a4a80b41c3177f0aba, type: 3}
 --- !u!1001 &111274638
 PrefabInstance:
@@ -6462,7 +6465,20 @@ MonoBehaviour:
     requiredCount: 2
   - itemName: "\uCD08\uBC25"
     requiredCount: 1
---- !u!65 &214279093
+--- !u!114 &214279099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 214279087}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf87cd379c85b2440b56a98e0c4192b8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  questChecker: {fileID: 797148430}
+--- !u!65 &214279103
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6477,25 +6493,34 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 6, y: 3, z: 6}
-  m_Center: {x: 0.07, y: 1, z: 2}
---- !u!114 &214279095
-MonoBehaviour:
+  m_Size: {x: 2.5, y: 3, z: 2.5}
+  m_Center: {x: 0, y: 1, z: 0}
+--- !u!64 &214279104
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 214279087}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe158ea200fa0ed4a9386e89ac870a4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  questChecker: {fileID: 797148430}
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1001 &215994361
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20092,9 +20117,9 @@ GameObject:
   - component: {fileID: 797148426}
   - component: {fileID: 797148425}
   - component: {fileID: 797148424}
-  - component: {fileID: 797148432}
   - component: {fileID: 797148433}
   - component: {fileID: 797148434}
+  - component: {fileID: 797148436}
   m_Layer: 12
   m_Name: Player
   m_TagString: Player
@@ -20174,7 +20199,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   questChecker: {fileID: 797148430}
-  playerTag: Player
 --- !u!114 &797148426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20250,8 +20274,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c126309eb0d945248b09a2aa7c8007e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  requiredItems: []
-  maxTotalValue: 10
+  inventory: {fileID: 0}
+  stageData: {fileID: 0}
+  topPanel: {fileID: 0}
 --- !u!114 &797148431
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20265,29 +20290,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxCapacity: 20
---- !u!136 &797148432
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 797148413}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 1
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!114 &797148433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20346,6 +20348,29 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!136 &797148436
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 797148413}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 1, z: 0}
 --- !u!1001 &798064593
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -24061,6 +24086,7 @@ GameObject:
   - component: {fileID: 911148211}
   - component: {fileID: 911148217}
   - component: {fileID: 911148216}
+  - component: {fileID: 911148218}
   m_Layer: 12
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -24188,6 +24214,22 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &911148218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 911148210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75d748d9f87288247a5f9477a4a64bc8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 911148217}
+  cashierLayer:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!1001 &911684371
 PrefabInstance:
   m_ObjectHideFlags: 0
