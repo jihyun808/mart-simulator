@@ -153,6 +153,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemSize: 1
   itemValue: 0
+  itemIcon: {fileID: 522399671, guid: a338dadbae9fee74bbbece9b6efe937f, type: 3}
+  justDroppedWindow: 0.6
 --- !u!114 &-9128458944119160303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,4 +169,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   capacityCost: 1
   usePickupSize: 1
-  lockRotationWhenLoaded: 1
