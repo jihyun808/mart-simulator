@@ -1,123 +1,170 @@
-using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody))]
 public class CartMount : MonoBehaviour
 {
-    [Header("Follow")]
-    public Transform handle;                      // 카트 손잡이(자식)
-    public Transform playerAnchor;                // 플레이어 앞 고정점(필수)
-    public float smoothTime = 0.12f;              // 스무스 추종 감쇠 시간
-    public float maxFollowSpeed = 6f;             // 최대 추종 속도
-    public float rotationSpeed = 6f;              // 회전 스무스 속도
-    public float minDistanceFromPlayer = 0.55f;   // 겹침 방지 최소 거리
+    [Header("References")]
+    public Transform handle;
+    public Transform playerAnchor;
+    public Transform playerRoot;
 
-    [Header("Orientation Fix")]
-    public Vector3 rotationOffsetEuler = new(0, 0, 0); // 모델 축 보정(Y=±90 등)
+    [Header("Follow Tuning")]
+    public float followGap = 0.25f;
+    public float minDistanceFromPlayer = 0.65f;
+    public float positionGain = 3.0f;
+    public float damping = 0.22f;
+    public float maxSpeed = 8.0f;
 
-    [Header("Ground Snap")]
+    [Header("Rotation")]
+    public float yawDegPerSec = 420f;
+    public Vector3 rotationOffsetEuler = Vector3.zero;
+
+    [Header("Ground Snap (Optional)")]
     public bool snapToGround = true;
-    public LayerMask groundMask;                  // 바닥 레이어
+    public LayerMask groundMask;
+    public float groundRayHeight = 0.6f;
+    public float groundRayLen = 1.2f;
     public float groundOffset = 0.02f;
 
-    private Transform _player;                    // Mount 시 받은 pivot
-    private bool _mounted;
-    private Rigidbody _rb;
+    [Header("Anti-Jitter")]
+    public float targetSmoothing = 0.05f;
+    public float deadZone = 0.015f;
 
-    private Vector3 _vel;                         // SmoothDamp 내부 속도 상태
-    private readonly List<(Collider a, Collider b)> _ignoredPairs = new();
+    [Header("Y Lock When Mounted")]
+    public bool lockYOnMount = true;   // ✅ 장착 중 Y 고정
+    private float _lockedY;            // ✅ 고정할 Y 값
+    private RigidbodyConstraints _origConstraints; // ✅ 원래 제약 저장
+
+    private Rigidbody _rb;
+    private bool _mounted;
+
+    private Vector3 _anchorPos;
+    private Vector3 _anchorFwd;
+
+    private Vector3 _filteredTarget;
+    private Vector3 _filteredVel;
 
     public bool IsMounted => _mounted;
 
-    public void Mount(Transform player)
+    void Awake()
     {
-        _player = player;
+        _rb = GetComponent<Rigidbody>();
+        _rb.mass = Mathf.Max(1f, _rb.mass);
+        _rb.linearDamping = Mathf.Max(_rb.linearDamping, 1.0f);
+        _rb.angularDamping = Mathf.Max(_rb.angularDamping, 2.0f);
+        _rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
+        _rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
+        _rb.interpolation = RigidbodyInterpolation.Interpolate;
+        _rb.isKinematic = false;
+        _origConstraints = _rb.constraints; // 저장
+    }
+
+    public void Mount(Transform playerAnchorTransform)
+    {
+        playerAnchor = playerAnchorTransform;
+        if (!playerRoot && playerAnchor) playerRoot = playerAnchor.root;
+
         _mounted = true;
 
-        if (_rb == null) _rb = GetComponent<Rigidbody>();
-        if (_rb)
-        {
-            _rb.isKinematic = true;
-            _rb.linearVelocity = Vector3.zero;         // ← linearVelocity 아님!
-            _rb.angularVelocity = Vector3.zero;
-        }
+        _anchorPos = playerAnchor ? playerAnchor.position : transform.position;
+        Vector3 f = playerAnchor ? playerAnchor.forward : transform.forward;
+        f.y = 0f;
+        _anchorFwd = f.sqrMagnitude > 1e-6f ? f.normalized : Vector3.forward;
 
-        TogglePlayerCartCollision(true);
+        _filteredTarget = transform.position;
+        _filteredVel = Vector3.zero;
+
+        if (lockYOnMount)
+        {
+            _lockedY = transform.position.y;                     // ✅ 현재 Y 저장
+            _rb.constraints = _origConstraints | RigidbodyConstraints.FreezePositionY; // ✅ 물리적으로 Y 고정
+        }
     }
 
     public void Unmount()
     {
         _mounted = false;
-        TogglePlayerCartCollision(false);
-        _ignoredPairs.Clear();
-        if (_rb) _rb.isKinematic = false;
-        _player = null;
-        _vel = Vector3.zero;
+        _rb.linearVelocity *= 0.5f;
+        _rb.angularVelocity = Vector3.zero;
+
+        // ✅ 원래 제약으로 복원
+        _rb.constraints = _origConstraints;
     }
 
-    void LateUpdate()
+    void Update()
     {
-        if (!_mounted || _player == null || handle == null || playerAnchor == null) return;
+        if (!_mounted || !playerAnchor) return;
 
-        // 1) 앵커의 평면 위치(XZ)만 목표로 사용
-        Vector3 anchorPos = playerAnchor.position;
+        _anchorPos = playerAnchor.position;
 
-        // handle->root 오프셋 유지(손잡이가 앵커로 오게 루트 이동)
+        Vector3 f = playerAnchor.forward;
+        f.y = 0f;
+        _anchorFwd = (f.sqrMagnitude > 1e-6f) ? f.normalized : _anchorFwd;
+    }
+
+    void FixedUpdate()
+    {
+        if (!_mounted || !playerAnchor || !handle) return;
+
+        // 1) 손잡이-루트 오프셋 유지
         Vector3 handleToRoot = transform.position - handle.position;
-        Vector3 desired = anchorPos + handleToRoot;
 
-        // Y는 현재 높이 유지(이후 바닥 스냅으로 보정)
-        float keepY = transform.position.y;
-        desired.y = keepY;
+        // 2) 기본 목표 (앵커 뒤로 followGap만큼)
+        Vector3 target = _anchorPos + handleToRoot - _anchorFwd * followGap;
 
-        // 최소 거리 보장(앞으로 못 가는 느낌 방지)
-        Vector3 flatToPlayer = desired - _player.position; flatToPlayer.y = 0f;
-        float d = flatToPlayer.magnitude;
-        if (d < minDistanceFromPlayer && d > 1e-3f)
+        // 3) 플레이어 최소 거리 보장(수평)
+        if (playerRoot)
         {
-            desired = _player.position + flatToPlayer.normalized * minDistanceFromPlayer;
-            desired.y = keepY;
+            Vector3 toCart = transform.position - playerRoot.position; toCart.y = 0f;
+            float d = toCart.magnitude;
+            if (d < minDistanceFromPlayer && d > 1e-4f)
+                target += toCart.normalized * (minDistanceFromPlayer - d);
         }
 
-        // 바닥 스냅
-        if (snapToGround)
+        // 4) Y 처리
+        if (lockYOnMount)
         {
-            if (Physics.Raycast(desired + Vector3.up * 2f, Vector3.down, out var hit, 5f, groundMask, QueryTriggerInteraction.Ignore))
-                desired.y = hit.point.y + groundOffset;
+            // ✅ 장착 동안 고정 Y 사용
+            target.y = _lockedY;
+        }
+        else if (snapToGround)
+        {
+            // 평소처럼 지면 스냅
+            Vector3 rayStart = target + Vector3.up * groundRayHeight;
+            if (Physics.Raycast(rayStart, Vector3.down, out var hit, groundRayLen, groundMask, QueryTriggerInteraction.Ignore))
+                target.y = hit.point.y + groundOffset;
+            else
+                target.y = transform.position.y;
+        }
+        else
+        {
+            target.y = transform.position.y;
         }
 
-        // 2) 위치 스무딩
-        transform.position = Vector3.SmoothDamp(transform.position, desired, ref _vel, smoothTime, maxFollowSpeed);
+        // 5) 타깃 로우패스
+        if (_filteredTarget == Vector3.zero) _filteredTarget = transform.position;
+        _filteredTarget = Vector3.SmoothDamp(_filteredTarget, target, ref _filteredVel, targetSmoothing);
 
-        // 3) 회전 스무딩 (수평만, 모델 보정 포함)
-        Vector3 fwd = _player.forward; fwd.y = 0f;
-        if (fwd.sqrMagnitude > 0.0001f)
+        // 6) PD 속도 제어(수평만)
+        Vector3 posError = _filteredTarget - transform.position; posError.y = 0f;
+        if (posError.sqrMagnitude < deadZone * deadZone) posError = Vector3.zero;
+
+        Vector3 curVel = _rb.linearVelocity;
+        Vector3 flatVel = new Vector3(curVel.x, 0f, curVel.z);
+        Vector3 desiredVel = positionGain * posError - damping * flatVel;
+
+        if (desiredVel.magnitude > maxSpeed)
+            desiredVel = desiredVel.normalized * maxSpeed;
+
+        _rb.linearVelocity = new Vector3(desiredVel.x, curVel.y, desiredVel.z);
+
+        // 7) 회전(Yaw)
+        Vector3 face = _anchorFwd;
+        if (face.sqrMagnitude > 1e-6f)
         {
-            Quaternion targetRot = Quaternion.LookRotation(fwd) * Quaternion.Euler(rotationOffsetEuler);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * rotationSpeed);
+            Quaternion targetRot = Quaternion.LookRotation(face) * Quaternion.Euler(rotationOffsetEuler);
+            Quaternion slerped = Quaternion.RotateTowards(_rb.rotation, targetRot, yawDegPerSec * Time.fixedDeltaTime);
+            _rb.MoveRotation(slerped);
         }
-    }
-
-    // 플레이어와 카트 충돌 임시 on/off
-    void TogglePlayerCartCollision(bool ignore)
-    {
-        if (_player == null) return;
-        var playerCols = _player.GetComponentsInChildren<Collider>(true);
-        var cartCols   = GetComponentsInChildren<Collider>(true);
-
-        foreach (var pc in playerCols)
-        {
-            if (!pc || !pc.enabled) continue;
-            foreach (var cc in cartCols)
-            {
-                if (!cc || !cc.enabled) continue;
-                if (cc.isTrigger) continue;
-                Physics.IgnoreCollision(pc, cc, ignore);
-                if (ignore) _ignoredPairs.Add((pc, cc));
-            }
-        }
-
-        if (!ignore)
-            foreach (var p in _ignoredPairs)
-                if (p.a && p.b) Physics.IgnoreCollision(p.a, p.b, false);
     }
 }
