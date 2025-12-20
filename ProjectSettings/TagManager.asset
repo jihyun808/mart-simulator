@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 3
   tags:
   - Ground
+  - cashier
   layers:
   - Default
   - TransparentFX
@@ -17,9 +18,9 @@ TagManager:
   - Player
   - CartZone
   - CartBody
-  - 
-  - 
-  - 
+  - cashier
+  - Player
+  - LoadedItem
   - 
   - 
   - 
