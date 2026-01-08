@@ -2,33 +2,22 @@ using UnityEngine;
 
 public class InventoryUI : MonoBehaviour
 {
-    public InventorySlot[] slots;  // 4칸 슬롯들
+    public InventorySlot[] uiSlots; // 에디터에서 4개 연결
 
-    // 아이템 추가 (Sprite 아이콘만 넣어서 표시)
-    public bool AddItem(Sprite icon)
+    // 배열 버전을 받습니다.
+    public void UpdateUI(PickupableItem[] items)
     {
-        foreach (var slot in slots)
+        for (int i = 0; i < uiSlots.Length; i++)
         {
-            if (slot.IsEmpty)
+            // 데이터가 있고(null 아님) & 슬롯 인덱스가 범위 내라면
+            if (i < items.Length && items[i] != null)
             {
-                slot.SetItem(icon);
-                return true;
+                uiSlots[i].SetItem(items[i].itemIcon);
+            }
+            else
+            {
+                uiSlots[i].Clear(); // 데이터가 없으면 비움
             }
         }
-
-        Debug.Log("InventoryUI: 인벤토리가 가득 찼습니다.");
-        return false;
-    }
-
-    // index 번째 슬롯 비우기 (원하면 나중에 사용)
-    public void RemoveItem(int index)
-    {
-        if (index < 0 || index >= slots.Length)
-        {
-            Debug.LogWarning("InventoryUI: 잘못된 슬롯 인덱스");
-            return;
-        }
-
-        slots[index].Clear();
     }
 }

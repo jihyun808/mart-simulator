@@ -1,110 +1,152 @@
-// Inventory.cs
 using UnityEngine;
-using System.Collections.Generic;
+using System.Collections.Generic; // 리스트 사용을 위해 필요
 
 public class Inventory : MonoBehaviour
 {
     [Header("Inventory Settings")]
-    [SerializeField] private int maxCapacity = 20;
+    [SerializeField] private int maxCapacity = 4; // 플레이어 주머니 용량 (기본 4)
 
-    private List<PickupableItem> items = new List<PickupableItem>();
-    private int currentCapacity = 0;
+    // 4칸짜리 슬롯 (F1~F4에 대응)
+    private PickupableItem[] slots = new PickupableItem[4]; 
+    
+    // 현재 무게 합계
+    private int currentCapacity = 0; 
 
-    public System.Action OnInventoryChanged;
+    public InventoryUI inventoryUI;
 
-    // ⭐ 추가: UI 참조 캐싱 (FindObjectOfType 반복 방지)
-    private InventoryUI inventoryUI;
-
-    private void Awake()
+    private void Start()
     {
-        inventoryUI = FindObjectOfType<InventoryUI>();
+        if (inventoryUI == null) inventoryUI = FindObjectOfType<InventoryUI>();
+        UpdateUI();
     }
 
+    // ---------------------------------------------------------
+    // ⭐ [1] 현재 발생하는 오류(CheckCanAdd) 해결용 함수
+    // ---------------------------------------------------------
+    public bool CheckCanAdd(int slotIndex, PickupableItem item)
+    {
+        // 1. 인덱스 범위 확인
+        if (slotIndex < 0 || slotIndex >= slots.Length) return false;
+        
+        // 2. 이미 칸이 차있는지 확인
+        if (slots[slotIndex] != null) return false; 
+
+        // 3. 무게(용량) 확인
+        if (currentCapacity + item.GetItemSize() > maxCapacity) return false; 
+
+        return true; // 넣을 수 있음!
+    }
+
+    // ---------------------------------------------------------
+    // ⭐ [2] 호환성 패치 (다른 스크립트 오류 해결용)
+    // ---------------------------------------------------------
+
+    // 자동 넣기 (PlayerPickupController 등에서 사용)
     public bool AddItem(PickupableItem item)
     {
-        int itemSize = item.GetItemSize();
-
-        // 용량 초과 방지
-        if (currentCapacity + itemSize > maxCapacity)
-            return false;
-
-        // 실제 인벤토리에 추가
-        items.Add(item);
-        currentCapacity += itemSize;
-
-        // 오브젝트 비활성화 (팀원 로직 유지!)
-        item.gameObject.SetActive(false);
-
-        // ⭐ UI 아이콘 추가 (아이콘이 있고 UI가 있을 때만)
-        if (inventoryUI != null && item.itemIcon != null)
+        for (int i = 0; i < slots.Length; i++)
         {
-            inventoryUI.AddItem(item.itemIcon);
+            // 빈 칸을 찾아서 넣기 시도
+            if (slots[i] == null)
+            {
+                return TryAddItemToSlot(i, item); 
+            }
         }
-
-        // ⭐⭐⭐ Bag 카운트 증가 추가!
-        FindObjectOfType<TopPanelManager>()?.AddToBag();
-
-        // 이벤트 호출 (팀원 기능 유지!)
-        OnInventoryChanged?.Invoke();
-
-        return true;
+        Debug.Log("인벤토리에 빈 슬롯이 없습니다.");
+        return false;
     }
 
-    public bool RemoveItem(PickupableItem item)
+    // 모든 아이템 가져오기 (Cashier, QuestItemChecker 등에서 사용)
+    public List<PickupableItem> GetAllItems()
     {
-        if (!items.Contains(item))
-            return false;
-
-        items.Remove(item);
-        currentCapacity -= item.GetItemSize();
-
-        OnInventoryChanged?.Invoke();
-        return true;
+        List<PickupableItem> activeItems = new List<PickupableItem>();
+        foreach (var item in slots)
+        {
+            if (item != null) activeItems.Add(item);
+        }
+        return activeItems;
     }
 
+    // 특정 아이템 제거 (StunHandler 등에서 사용)
+    public void RemoveItem(PickupableItem item)
+    {
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i] == item)
+            {
+                DropItem(i, false); // 데이터만 삭제
+                return;
+            }
+        }
+    }
+
+    // 아이템 개수 세기
+    public int GetItemCount()
+    {
+        int count = 0;
+        foreach (var item in slots)
+        {
+            if (item != null) count++;
+        }
+        return count;
+    }
+
+    // 인덱스로 아이템 가져오기
     public PickupableItem GetItem(int index)
     {
-        if (index >= 0 && index < items.Count)
-            return items[index];
-
+        if (index >= 0 && index < slots.Length)
+            return slots[index];
         return null;
     }
 
-    public int GetItemCount()
+    // ---------------------------------------------------------
+    // ⭐ [3] 핵심 기능 (특정 슬롯 넣기/빼기)
+    // ---------------------------------------------------------
+
+    // 특정 슬롯에 넣기
+    public bool TryAddItemToSlot(int slotIndex, PickupableItem item)
     {
-        return items.Count;
+        // CheckCanAdd로 미리 검사했지만, 안전을 위해 한 번 더 체크
+        if (!CheckCanAdd(slotIndex, item)) return false;
+
+        slots[slotIndex] = item;
+        currentCapacity += item.GetItemSize();
+        
+        // 인벤토리에 들어갔으므로 월드에서 숨김
+        item.gameObject.SetActive(false); 
+
+        UpdateUI();
+        Debug.Log($"{slotIndex + 1}번 슬롯에 저장 완료!");
+        return true;
     }
 
-    public int GetCurrentCapacity()
+    // 아이템 빼기 (dropToWorld가 true면 바닥에 생성)
+    public PickupableItem DropItem(int slotIndex, bool dropToWorld = true)
     {
-        return currentCapacity;
+        if (slotIndex < 0 || slotIndex >= slots.Length) return null;
+        if (slots[slotIndex] == null) return null;
+
+        PickupableItem item = slots[slotIndex];
+
+        currentCapacity -= item.GetItemSize();
+        slots[slotIndex] = null; // 슬롯 비우기
+
+        if (dropToWorld)
+        {
+            item.gameObject.SetActive(true);
+            // 위치 초기화 등은 호출한 쪽에서 처리
+        }
+        
+        UpdateUI();
+        return item;
     }
 
-    public int GetMaxCapacity()
+    // UI 갱신
+    private void UpdateUI()
     {
-        return maxCapacity;
+        if (inventoryUI != null) inventoryUI.UpdateUI(slots);
     }
 
-    public bool IsFull()
-    {
-        return currentCapacity >= maxCapacity;
-    }
-
-    public int GetRemainingCapacity()
-    {
-        return maxCapacity - currentCapacity;
-    }
-
-    public List<PickupableItem> GetAllItems()
-    {
-        return new List<PickupableItem>(items);
-    }
-
-    public void ClearInventory()
-    {
-        items.Clear();
-        currentCapacity = 0;
-
-        OnInventoryChanged?.Invoke();
-    }
+    public int GetCurrentCapacity() => currentCapacity;
+    public int GetMaxCapacity() => maxCapacity;
 }
