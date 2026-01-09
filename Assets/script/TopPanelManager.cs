@@ -18,6 +18,9 @@ public class TopPanelManager : MonoBehaviour
     private int currentMoney = 50;
     private int currentBag = 0;
     private int currentCart = 0;
+    
+    // 게임오버 중복 호출 방지
+    private bool isTimeOver = false;
 
     void Start()
     {
@@ -32,6 +35,9 @@ public class TopPanelManager : MonoBehaviour
 
     private void HandleTimer()
     {
+        // 이미 게임오버 처리됐으면 더 이상 실행 안 함
+        if (isTimeOver) return;
+
         if (currentTime > 0)
         {
             currentTime -= Time.deltaTime;
@@ -40,7 +46,14 @@ public class TopPanelManager : MonoBehaviour
         else
         {
             currentTime = 0;
-            // TODO: 시간 끝난 경우 처리
+            timerText.text = "0";
+            isTimeOver = true;
+
+            // ✅ 게임오버 호출
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.GameOver();
+            }
         }
     }
 
