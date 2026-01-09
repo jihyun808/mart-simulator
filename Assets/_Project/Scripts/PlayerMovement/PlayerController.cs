@@ -19,7 +19,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.GameIsPaused)
+        if (GameManager.GameIsPaused || GameManager.IsGameOver)
             return;
 
         UpdateRotate();
