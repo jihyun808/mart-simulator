@@ -8,7 +8,8 @@ public class StageRequirement
     public int requiredCount;  // 필요한 개수
 }
 
-public class Stage1Data : MonoBehaviour
+[CreateAssetMenu(fileName = "StageData", menuName = "Game/Stage Data")]
+public class Stage1Data : ScriptableObject
 {
-    public List<StageRequirement> requirements; // 스테이지 요구 목록
+    public List<StageRequirement> requirements = new List<StageRequirement>();
 }
