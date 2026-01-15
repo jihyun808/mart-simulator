@@ -19,9 +19,15 @@ public class PlayerPickupController : MonoBehaviour
         inventory = GetComponent<Inventory>();
         inputHandler = GetComponent<InputHandler>();
         
+        // ✅ 추천: 런타임 AddComponent 제거, 에러 로그로 변경
         if (inventory == null)
         {
-            inventory = gameObject.AddComponent<Inventory>();
+            Debug.LogError("❌ Player에 Inventory 컴포넌트가 없습니다! (Inspector에서 추가하세요)");
+        }
+        
+        if (inputHandler == null)
+        {
+            Debug.LogError("❌ Player에 InputHandler 컴포넌트가 없습니다!");
         }
     }
 
@@ -36,6 +42,13 @@ public class PlayerPickupController : MonoBehaviour
 
     private void HandleInventoryInput()
     {
+        // ✅ 1단계: E키 입력 확인 로그
+        if (inputHandler != null && inputHandler.IsInteractPressed())
+        {
+            Debug.Log("✅ Interact(E) pressed!");
+        }
+        
+        // ✅ 2단계: 인벤토리 추가 시도
         if (inputHandler != null && inputHandler.IsInteractPressed() && currentItem != null)
         {
             AddToInventory();
@@ -64,6 +77,7 @@ public class PlayerPickupController : MonoBehaviour
             {
                 currentItem = item;
                 currentItem.PickUp(hand);
+                Debug.Log($"📦 아이템 집음: {currentItem.itemName}");
             }
         }
     }
@@ -72,6 +86,7 @@ public class PlayerPickupController : MonoBehaviour
     {
         if (currentItem != null)
         {
+            Debug.Log($"📦 아이템 놓음: {currentItem.itemName}");
             currentItem.Drop();
             currentItem = null;
         }
@@ -81,10 +96,25 @@ public class PlayerPickupController : MonoBehaviour
     {
         if (currentItem != null && inventory != null)
         {
-            if (inventory.AddItem(currentItem))
+            // ✅ AddItem 성공 여부 확인 로그
+            bool ok = inventory.AddItem(currentItem);
+            Debug.Log($"🧺 AddItem 결과={ok}, item={currentItem.itemName}");
+            
+            if (ok)
             {
                 currentItem = null;
             }
+            else
+            {
+                Debug.LogWarning($"⚠️ 인벤토리에 {currentItem.itemName} 추가 실패!");
+            }
+        }
+        else
+        {
+            if (currentItem == null)
+                Debug.LogWarning("⚠️ currentItem이 null입니다!");
+            if (inventory == null)
+                Debug.LogWarning("⚠️ inventory가 null입니다!");
         }
     }
 

@@ -21,8 +21,12 @@ public class QuestItemChecker : MonoBehaviour
     // -------------------------------------------------------------
     public bool HasAllRequiredItems()
     {
-        if (inventory == null || stageData == null)
+        Debug.Log($"[QIC] invCount={inventory?.GetAllItems().Count}, stageData={(stageData?stageData.name:"null")}");
+
+        Debug.Log("🧺 인벤 아이템 수: " + inventory.GetAllItems().Count);
+        if (inventory == null)
             return false;
+
 
         foreach (var req in stageData.requirements)
         {
@@ -38,18 +42,20 @@ public class QuestItemChecker : MonoBehaviour
         return true;
     }
 
-    private int CountItemInInventory(string itemName)
+   private int CountItemInInventory(string itemName)
+{
+    int count = 0;
+
+    foreach (var item in inventory.GetAllItems())
     {
-        int count = 0;
-
-        foreach (var item in inventory.GetAllItems())
-        {
-            if (item.itemName == itemName)
-                count++;
-        }
-
-        return count;
+        Debug.Log($"[INV] script itemName='{item.itemName}', objectName='{item.gameObject.name}'");
+        if (item.itemName == itemName) count++;
     }
+
+    Debug.Log($"[REQ] required itemName='{itemName}'");
+    return count;
+}
+
 
     // -------------------------------------------------------------
     // 2) 금액(예산) 체크

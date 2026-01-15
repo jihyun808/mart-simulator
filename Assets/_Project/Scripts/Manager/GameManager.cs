@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     [Header("UI Panels")]
     [SerializeField] private GameObject pauseMenuPanel;
     [SerializeField] private GameObject gameOverPanel;
+    [SerializeField] private GameObject clearPanel;
     [SerializeField] private GameObject settingsPanel;
 
     [Header("Scene Names")]
@@ -80,6 +81,9 @@ public class GameManager : MonoBehaviour
         if (gameOverPanel != null)
             gameOverPanel.SetActive(false);
         
+        if (clearPanel != null)
+            clearPanel.SetActive(false);
+        
         if (settingsPanel != null)
             settingsPanel.SetActive(false);
     }
@@ -127,6 +131,24 @@ public class GameManager : MonoBehaviour
         
         if (gameOverPanel != null)
             gameOverPanel.SetActive(true);
+    }
+
+    // 게임 클리어 함수 추가
+    public void GameClear()
+    {
+        State = GameState.GameOver;  // Clear도 GameOver 상태로 취급
+        Time.timeScale = 0f;
+        SetCursorState(true);
+
+        // 다른 패널들 닫고, clear 패널만 표시
+        if (pauseMenuPanel != null)
+            pauseMenuPanel.SetActive(false);
+        
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(false);
+        
+        if (clearPanel != null)
+            clearPanel.SetActive(true);
     }
 
     private System.Collections.IEnumerator LockCursorNextFrame()
