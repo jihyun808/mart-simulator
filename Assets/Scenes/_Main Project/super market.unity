@@ -1591,6 +1591,7 @@ GameObject:
   - component: {fileID: 52952844}
   - component: {fileID: 52952843}
   - component: {fileID: 52952842}
+  - component: {fileID: 52952849}
   m_Layer: 7
   m_Name: shopping cart
   m_TagString: Untagged
@@ -1629,14 +1630,7 @@ MonoBehaviour:
   itemMask:
     serializedVersion: 2
     m_Bits: 8
-  justDroppedWindow: 0.6
-  acceptSpeed: 1.2
-  anchorParent: {fileID: 1961601159}
-  localBoxHalfExtents: {x: 0.4, y: 0, z: 0.6}
-  placeYOffset: 0.25
-  minSeparation: 0.12
-  placementMaxTries: 12
-  randomYawMax: 12
+  hideItemInScene: 1
 --- !u!114 &52952843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1789,6 +1783,30 @@ Transform:
   - {fileID: 1367016675}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -84.418, y: -47.006, z: -19.489}
+--- !u!114 &52952849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 52952841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46589501f3ddc064a8470e1376972dc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  useDistance: 3
+  cartMask:
+    serializedVersion: 2
+    m_Bits: 128
+  playerPivot: {fileID: 4012252791177756195}
+  playerHand: {fileID: 1994813215}
+  onEPressedWhenNoCart:
+    m_PersistentCalls:
+      m_Calls: []
+  onCartNearbyChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &57187098
 GameObject:
   m_ObjectHideFlags: 0
@@ -5830,8 +5848,8 @@ MonoBehaviour:
   anchorParent: {fileID: 1961601159}
   acceptSpeed: 0.2
   itemMask:
-    serializedVersion: 2
     m_Bits: 8
+  _inventory: {fileID: 0}
 --- !u!65 &186380493
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -15243,17 +15261,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1591620446957710724, guid: 9f659460d7b7cc041aed91643c1e8b5e, type: 3}
   m_PrefabInstance: {fileID: 1779592067}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &575808459 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2274575583564076608, guid: 9f659460d7b7cc041aed91643c1e8b5e, type: 3}
-  m_PrefabInstance: {fileID: 1779592067}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e766e5beeea3dcf40a71508f461e68e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &576843406
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20576,6 +20583,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxCapacity: 20
+  inventoryUI: {fileID: 0}
 --- !u!114 &797148433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20674,6 +20682,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   playerPivot: {fileID: 4012252791177756195}
+  playerHand: {fileID: 0}
   onEPressedWhenNoCart:
     m_PersistentCalls:
       m_Calls: []
@@ -20742,17 +20751,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1591620446957710724, guid: 9f659460d7b7cc041aed91643c1e8b5e, type: 3}
   m_PrefabInstance: {fileID: 1705673218}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &799764378 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2274575583564076608, guid: 9f659460d7b7cc041aed91643c1e8b5e, type: 3}
-  m_PrefabInstance: {fileID: 1705673218}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e766e5beeea3dcf40a71508f461e68e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &801528673
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29131,6 +29129,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenuPanel: {fileID: 1040275163}
+  gameOverPanel: {fileID: 0}
+  settingsPanel: {fileID: 0}
   mainSceneName: MainMenu
   settingsSceneName: Settings
 --- !u!224 &1097410177
@@ -32560,17 +32560,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1591620446957710724, guid: 9f659460d7b7cc041aed91643c1e8b5e, type: 3}
   m_PrefabInstance: {fileID: 1491349995}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1201609686 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2274575583564076608, guid: 9f659460d7b7cc041aed91643c1e8b5e, type: 3}
-  m_PrefabInstance: {fileID: 1491349995}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e766e5beeea3dcf40a71508f461e68e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &1201750070 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9094650342213253386, guid: 98ee4186ddd16ab479b028d4e1df1c7e, type: 3}
@@ -50884,11 +50873,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4243729f944878b43826d8c38a9555f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slots:
-  - {fileID: 575808459}
-  - {fileID: 1863128134}
-  - {fileID: 799764378}
-  - {fileID: 1201609686}
+  uiSlots: []
 --- !u!114 &1842297213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51496,17 +51481,6 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 1591620446957710724, guid: 9f659460d7b7cc041aed91643c1e8b5e, type: 3}
   m_PrefabInstance: {fileID: 2011003975}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1863128134 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 2274575583564076608, guid: 9f659460d7b7cc041aed91643c1e8b5e, type: 3}
-  m_PrefabInstance: {fileID: 2011003975}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e766e5beeea3dcf40a71508f461e68e2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1865790542
 PrefabInstance:
   m_ObjectHideFlags: 0
