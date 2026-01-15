@@ -3,11 +3,13 @@ using UnityEngine.UI;
 
 public class InventorySelector : MonoBehaviour
 {
-    public Image[] slots;  // 4개의 슬롯 (Slot1~Slot4)
-    private int currentIndex = 0;
+    public Image[] slots;  // Slot1~Slot4 배경 이미지
+    
+    // 현재 선택된 인덱스를 외부에서 가져갈 수 있게 함
+    public int CurrentIndex { get; private set; } = 0;
 
-    public Color normalColor = new Color(1, 1, 1, 0.3f); // 기본 색
-    public Color selectedColor = Color.white; // 선택된 슬롯 색
+    public Color normalColor = new Color(1, 1, 1, 0.3f);
+    public Color selectedColor = Color.white;
 
     void Start()
     {
@@ -16,6 +18,7 @@ public class InventorySelector : MonoBehaviour
 
     void Update()
     {
+        // 키 입력에 따라 슬롯 변경
         if (Input.GetKeyDown(KeyCode.F1)) HighlightSlot(0);
         if (Input.GetKeyDown(KeyCode.F2)) HighlightSlot(1);
         if (Input.GetKeyDown(KeyCode.F3)) HighlightSlot(2);
@@ -24,7 +27,7 @@ public class InventorySelector : MonoBehaviour
 
     void HighlightSlot(int index)
     {
-        currentIndex = index;
+        CurrentIndex = index; // 선택된 인덱스 저장
 
         for (int i = 0; i < slots.Length; i++)
         {

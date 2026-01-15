@@ -4,33 +4,38 @@ using UnityEngine;
 
 public class ShoppingListUI : MonoBehaviour
 {
-    public TextMeshProUGUI itemListText;      // 품목을 보여줄 텍스트
-    public ShoppingListManager listManager;   // 방금 만든 ShoppingSystem
+    public TextMeshProUGUI itemListText;
+    public ShoppingListManager listManager;
 
     private void OnEnable()
     {
-        RefreshUI();   // Panel이 열릴 때마다 갱신
+        RefreshUI();
     }
 
     public void RefreshUI()
     {
-        if (itemListText == null || listManager == null)
-        {
-            Debug.LogWarning("ShoppingListUI: 참조가 설정되지 않았습니다.");
-            return;
-        }
+        if (itemListText == null || listManager == null) return;
+
+        // UI 켜질 때 최신 상태로 갱신
+        listManager.UpdateCheckList();
 
         StringBuilder sb = new StringBuilder();
-        sb.AppendLine("구매 목록");
+        sb.AppendLine("<size=120%><b>구매 목록</b></size>");
         sb.AppendLine();
 
         foreach (var item in listManager.items)
         {
-            string check = item.purchased ? "✔" : "□";
-            sb.AppendLine($"{check} {item.itemName}");
-        }
+            // 다 모았으면 체크(✔), 아니면 빈칸(□)
+            string check = item.IsComplete ? "<color=green>✔</color>" : "□";
+            
+            // 이름과 개수 표시 (예: 와인잔 (1/2))
+            string status = $"{item.itemName} <color=yellow>({item.currentAmount}/{item.requiredAmount})</color>";
+            
+            // 완료되면 취소선 긋기
+            if (item.IsComplete) status = $"<s>{status}</s>";
 
-        Debug.Log("ShoppingListUI 문자열:\n" + sb.ToString());
+            sb.AppendLine($"{check} {status}");
+        }
 
         itemListText.text = sb.ToString();
     }

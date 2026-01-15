@@ -11,7 +11,7 @@ public class TopPanelManager : MonoBehaviour
 
     [Header("Game Settings")]
     public int startTime = 150;   // 시작 시간(초)
-    public int maxBag = 4;        // 가방 최대 용량
+    public int maxBag = 4;        // 가방 최대 용량 (기본값)
     public int maxCart = 30;      // 카트 최대 용량
 
     private float currentTime;
@@ -92,6 +92,17 @@ public class TopPanelManager : MonoBehaviour
     //   🎒 Bag & Cart 관련 함수들
     // ------------------------------
 
+    // ⭐ [추가됨] 인벤토리에서 호출하여 정확한 용량을 표시하는 함수
+    public void UpdateBagDisplay(int currentWeight, int maxWeight)
+    {
+        currentBag = currentWeight;
+        maxBag = maxWeight;
+        
+        // 텍스트 갱신 (예: 1/4)
+        bagText.text = currentBag + "/" + maxBag;
+    }
+
+    // (기존 단순 증가 함수 - 필요 없다면 안 써도 무방)
     public void AddToBag()
     {
         currentBag++;
