@@ -5,25 +5,51 @@ using UnityEngine;
 [Serializable]
 public class ShoppingItem
 {
-    public string itemName;   // 품목 이름 (예: 우유, 빵)
-    public bool purchased;    // 샀는지 여부
+    public string itemName;      // 아이템 이름 (예: "와인잔") - 뒤에 x2 붙이지 마세요!
+    public int requiredAmount;   // 목표 개수 (예: 2)
+    
+    [HideInInspector] 
+    public int currentAmount;    // 현재 먹은 개수 (게임 중 자동 계산됨)
+
+    public bool IsComplete => currentAmount >= requiredAmount; // 다 모았는지 확인
 }
 
 public class ShoppingListManager : MonoBehaviour
 {
+    [Header("Shopping List")]
     public List<ShoppingItem> items = new List<ShoppingItem>();
 
-    // 아이템을 샀다고 표시하는 함수 (나중에 "아이템 집기"랑 연결)
-    public void MarkPurchased(string itemName)
+    [Header("References")]
+    public Inventory playerInventory; // 플레이어 인벤토리 연결
+
+    // 인벤토리가 변할 때마다 호출되어 개수를 다시 셉니다.
+    public void UpdateCheckList()
     {
-        ShoppingItem item = items.Find(i => i.itemName == itemName);
-        if (item != null)
+        // 1. 개수 초기화
+        foreach (var item in items)
         {
-            item.purchased = true;
+            item.currentAmount = 0;
         }
-        else
+
+        // 2. 플레이어 인벤토리 뒤져서 개수 세기
+        if (playerInventory != null)
         {
-            Debug.LogWarning($"ShoppingListManager: '{itemName}' 항목을 찾을 수 없습니다.");
+            foreach (var invItem in playerInventory.GetAllItems())
+            {
+                CountItem(invItem.itemName);
+            }
+        }
+    }
+
+    private void CountItem(string targetName)
+    {
+        foreach (var shopItem in items)
+        {
+            // 공백 제거하고 이름 비교 (실수 방지)
+            if (shopItem.itemName.Trim() == targetName.Trim())
+            {
+                shopItem.currentAmount++;
+            }
         }
     }
 }
