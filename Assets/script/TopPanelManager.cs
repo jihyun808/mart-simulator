@@ -92,7 +92,7 @@ public class TopPanelManager : MonoBehaviour
     //   🎒 Bag & Cart 관련 함수들
     // ------------------------------
 
-    // ⭐ [추가됨] 인벤토리에서 호출하여 정확한 용량을 표시하는 함수
+    // ⭐ [팀원 추가] 인벤토리에서 호출하여 정확한 용량을 표시하는 함수
     public void UpdateBagDisplay(int currentWeight, int maxWeight)
     {
         currentBag = currentWeight;
@@ -102,7 +102,7 @@ public class TopPanelManager : MonoBehaviour
         bagText.text = currentBag + "/" + maxBag;
     }
 
-    // (기존 단순 증가 함수 - 필요 없다면 안 써도 무방)
+    // (기존 단순 증가 함수 - 필요에 따라 사용)
     public void AddToBag()
     {
         currentBag++;
