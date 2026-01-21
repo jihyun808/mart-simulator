@@ -1631,6 +1631,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   hideItemInScene: 1
+  justDroppedWindow: 0.6
+  changeLayerWhileStored: 1
+  storedLayerName: Ignore Raycast
 --- !u!114 &52952843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2617,19 +2620,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   items:
   - itemName: "\uBC14\uB098\uB098 x1"
-    purchased: 0
+    requiredAmount: 0
+    currentAmount: 0
   - itemName: "\uCEE4\uD53C x1"
-    purchased: 0
+    requiredAmount: 0
+    currentAmount: 0
   - itemName: "\uD504\uB9C1\uAE00\uC2A4 x1"
-    purchased: 0
+    requiredAmount: 0
+    currentAmount: 0
   - itemName: "\uC640\uC778\uC794 x2"
-    purchased: 0
+    requiredAmount: 0
+    currentAmount: 0
   - itemName: "\uC190\uC804\uB4F1 x2"
-    purchased: 0
+    requiredAmount: 0
+    currentAmount: 0
   - itemName: "\uCF5C\uB77C x2"
-    purchased: 0
+    requiredAmount: 0
+    currentAmount: 0
   - itemName: "\uCD08\uBC25 x1"
-    purchased: 0
+    requiredAmount: 0
+    currentAmount: 0
+  playerInventory: {fileID: 0}
 --- !u!4 &87829222
 Transform:
   m_ObjectHideFlags: 0
@@ -5845,11 +5856,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c4881293fc1fff45b38e97995587df9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  anchorParent: {fileID: 1961601159}
-  acceptSpeed: 0.2
-  itemMask:
-    m_Bits: 8
-  _inventory: {fileID: 0}
 --- !u!65 &186380493
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -6781,6 +6787,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   questChecker: {fileID: 797148430}
+  clearUI: {fileID: 0}
 --- !u!65 &214279103
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -8861,8 +8868,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6320a45c2aeb9494d95f418d49286cf6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  listManager: {fileID: 0}
-  listUI: {fileID: 0}
 --- !u!4 &296536018
 Transform:
   m_ObjectHideFlags: 0
@@ -20478,7 +20483,7 @@ MonoBehaviour:
   pickupRange: 3
   pickupLayer:
     serializedVersion: 2
-    m_Bits: 8
+    m_Bits: 8200
 --- !u!114 &797148425
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20492,6 +20497,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   questChecker: {fileID: 797148430}
+  clearUI: {fileID: 0}
 --- !u!114 &797148426
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20584,6 +20590,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxCapacity: 20
   inventoryUI: {fileID: 0}
+  topPanelManager: {fileID: 0}
+  shoppingListManager: {fileID: 0}
 --- !u!114 &797148433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20682,7 +20690,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   playerPivot: {fileID: 4012252791177756195}
-  playerHand: {fileID: 0}
+  playerHand: {fileID: 1994813215}
   onEPressedWhenNoCart:
     m_PersistentCalls:
       m_Calls: []
@@ -29130,6 +29138,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   pauseMenuPanel: {fileID: 1040275163}
   gameOverPanel: {fileID: 0}
+  clearPanel: {fileID: 0}
   settingsPanel: {fileID: 0}
   mainSceneName: MainMenu
   settingsSceneName: Settings

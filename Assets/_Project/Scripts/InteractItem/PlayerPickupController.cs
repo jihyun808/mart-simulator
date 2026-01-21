@@ -40,6 +40,26 @@ public class PlayerPickupController : MonoBehaviour
         HandlePickupInput();
     }
 
+    public void ForcePickUp(PickupableItem item)
+{
+    if (item == null) return;
+
+    // 이미 들고 있던 아이템이 있으면 정리
+    if (currentItem != null)
+    {
+        currentItem.Drop();
+        currentItem = null;
+    }
+
+    // ✅ 핵심: PlayerPickupController의 상태를 갱신
+    currentItem = item;
+
+    // ✅ 손에 장착
+    item.PickUp(hand);
+
+    Debug.Log($"[ForcePickUp] {item.name} picked up via Cart");
+}
+
     private void HandleInventoryInput()
     {
         // ✅ 1단계: E키 입력 확인 로그
