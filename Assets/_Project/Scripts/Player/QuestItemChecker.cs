@@ -1,11 +1,15 @@
 using UnityEngine;
 
+/// <summary>
+/// 스테이지 클리어 조건 체크 (필요 아이템, 예산 초과 여부)
+/// HasAllRequiredItems()와 IsWithinValueLimit() 호출하여 검증
+/// </summary>
 public class QuestItemChecker : MonoBehaviour
 {
     [Header("References")]
-    public Inventory inventory;          // 플레이어 인벤토리
-    public Stage1Data stageData;         // 현재 스테이지 요구사항
-    public TopPanelManager topPanel;     // 돈(예산) UI 및 실제 값 관리하는 스크립트
+    public Inventory inventory;
+    public Stage1Data stageData;
+    public TopPanelManager topPanel;
 
     private void Awake()
     {
@@ -16,17 +20,10 @@ public class QuestItemChecker : MonoBehaviour
             topPanel = FindObjectOfType<TopPanelManager>();
     }
 
-    // -------------------------------------------------------------
-    // 1) 스테이지 요구 아이템 체크
-    // -------------------------------------------------------------
+    /// <summary>스테이지 요구 아이템을 모두 가지고 있는지 확인</summary>
     public bool HasAllRequiredItems()
     {
-        Debug.Log($"[QIC] invCount={inventory?.GetAllItems().Count}, stageData={(stageData?stageData.name:"null")}");
-
-        Debug.Log("🧺 인벤 아이템 수: " + inventory.GetAllItems().Count);
-        if (inventory == null)
-            return false;
-
+        if (inventory == null || stageData == null) return false;
 
         foreach (var req in stageData.requirements)
         {
@@ -34,7 +31,6 @@ public class QuestItemChecker : MonoBehaviour
 
             if (count < req.requiredCount)
             {
-                Debug.Log($"❌ 부족한 아이템: {req.itemName} (필요 {req.requiredCount}개, 현재 {count}개)");
                 return false;
             }
         }
@@ -42,33 +38,25 @@ public class QuestItemChecker : MonoBehaviour
         return true;
     }
 
-   private int CountItemInInventory(string itemName)
-{
-    int count = 0;
-
-    foreach (var item in inventory.GetAllItems())
+    private int CountItemInInventory(string itemName)
     {
-        Debug.Log($"[INV] script itemName='{item.itemName}', objectName='{item.gameObject.name}'");
-        if (item.itemName == itemName) count++;
+        int count = 0;
+
+        foreach (var item in inventory.GetAllItems())
+        {
+            if (item.itemName == itemName) count++;
+        }
+
+        return count;
     }
 
-    Debug.Log($"[REQ] required itemName='{itemName}'");
-    return count;
-}
-
-
-    // -------------------------------------------------------------
-    // 2) 금액(예산) 체크
-    // -------------------------------------------------------------
+    /// <summary>인벤토리 총 가치가 예산 이하인지 확인</summary>
     public bool IsWithinValueLimit()
     {
-        if (inventory == null || topPanel == null)
-            return false;
+        if (inventory == null || topPanel == null) return false;
 
         int currentTotal = CalculateInventoryValue();
-        int maxValue = topPanel.GetCurrentBudget();  // 팀원 UI에 있던 예산 가져오기
-
-        Debug.Log($"💰 현재 금액: {currentTotal}, 제한 금액: {maxValue}");
+        int maxValue = topPanel.GetCurrentBudget();
 
         return currentTotal <= maxValue;
     }
@@ -81,6 +69,7 @@ public class QuestItemChecker : MonoBehaviour
         {
             sum += item.GetItemValue();
         }
+
         return sum;
     }
 }

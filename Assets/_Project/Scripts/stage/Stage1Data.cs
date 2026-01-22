@@ -1,13 +1,20 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+/// <summary>
+/// 스테이지 클리어 조건 (아이템 이름 + 필요 개수)
+/// </summary>
 [System.Serializable]
 public class StageRequirement
 {
-    public string itemName;    // 요구 아이템 이름
-    public int requiredCount;  // 필요한 개수
+    public string itemName;
+    public int requiredCount;
 }
 
+/// <summary>
+/// 스테이지 데이터 ScriptableObject
+/// Assets/Create/Game/Stage Data로 생성
+/// </summary>
 [CreateAssetMenu(fileName = "StageData", menuName = "Game/Stage Data")]
 public class Stage1Data : ScriptableObject
 {

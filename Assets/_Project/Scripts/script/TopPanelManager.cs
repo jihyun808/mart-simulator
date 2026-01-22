@@ -1,41 +1,42 @@
 using UnityEngine;
 using TMPro;
 
+/// <summary>
+/// 상단 UI 관리 (타이머, 돈, 가방, 카트)
+/// 타이머 종료 시 자동으로 GameOver 호출
+/// </summary>
 public class TopPanelManager : MonoBehaviour
 {
-    [Header("UI Text")]
+    [Header("UI Text - Inspector에서 연결")]
     public TextMeshProUGUI timerText;
     public TextMeshProUGUI moneyText;
     public TextMeshProUGUI bagText;
     public TextMeshProUGUI cartText;
 
     [Header("Game Settings")]
-    public int startTime = 150;   // 시작 시간(초)
-    public int maxBag = 4;        // 가방 최대 용량 (기본값)
-    public int maxCart = 30;      // 카트 최대 용량
+    public int startTime = 150;
+    public int maxBag = 4;
+    public int maxCart = 30;
 
     private float currentTime;
     private int currentMoney = 50;
     private int currentBag = 0;
     private int currentCart = 0;
-    
-    // 게임오버 중복 호출 방지
     private bool isTimeOver = false;
 
-    void Start()
+    private void Start()
     {
         currentTime = startTime;
         UpdateUI();
     }
 
-    void Update()
+    private void Update()
     {
         HandleTimer();
     }
 
     private void HandleTimer()
     {
-        // 이미 게임오버 처리됐으면 더 이상 실행 안 함
         if (isTimeOver) return;
 
         if (currentTime > 0)
@@ -49,7 +50,6 @@ public class TopPanelManager : MonoBehaviour
             timerText.text = "0";
             isTimeOver = true;
 
-            // ✅ 게임오버 호출
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.GameOver();
@@ -57,73 +57,78 @@ public class TopPanelManager : MonoBehaviour
         }
     }
 
-    // ------------------------------
-    //   💰 Money 관련 함수들
-    // ------------------------------
-
+    // ========== Money 관련 ==========
+    
+    /// <summary>현재 소지금 반환</summary>
     public int GetCurrentBudget()
     {
         return currentMoney;
     }
 
+    /// <summary>구매 가능 여부 확인</summary>
     public bool CanAfford(int cost)
     {
         return currentMoney >= cost;
     }
 
+    /// <summary>돈 소비 (성공 시 true 반환)</summary>
     public bool Spend(int cost)
     {
         if (currentMoney >= cost)
         {
             currentMoney -= cost;
-            moneyText.text = "$" + currentMoney;
+            UpdateMoneyUI();
             return true;
         }
         return false;
     }
 
+    /// <summary>돈 추가</summary>
     public void AddMoney(int amount)
     {
         currentMoney += amount;
-        moneyText.text = "$" + currentMoney;
+        UpdateMoneyUI();
     }
 
-    // ------------------------------
-    //   🎒 Bag & Cart 관련 함수들
-    // ------------------------------
-
-    // ⭐ [팀원 추가] 인벤토리에서 호출하여 정확한 용량을 표시하는 함수
+    // ========== Bag & Cart 관련 ==========
+    
+    /// <summary>
+    /// 가방 UI 업데이트 (인벤토리에서 호출)
+    /// 현재 무게와 최대 무게를 함께 표시
+    /// </summary>
     public void UpdateBagDisplay(int currentWeight, int maxWeight)
     {
         currentBag = currentWeight;
         maxBag = maxWeight;
-        
-        // 텍스트 갱신 (예: 1/4)
-        bagText.text = currentBag + "/" + maxBag;
+        bagText.text = $"{currentBag}/{maxBag}";
     }
 
-    // (기존 단순 증가 함수 - 필요에 따라 사용)
+    /// <summary>가방 아이템 수 증가 (단순 증가용)</summary>
     public void AddToBag()
     {
         currentBag++;
-        bagText.text = currentBag + "/" + maxBag;
+        bagText.text = $"{currentBag}/{maxBag}";
     }
 
+    /// <summary>카트 아이템 수 증가</summary>
     public void AddToCart()
     {
         currentCart++;
-        cartText.text = currentCart + "/" + maxCart;
+        bagText.text = $"{currentCart}/{maxCart}";
     }
 
-    // ------------------------------
-    //   🎛 UI 초기 업데이트
-    // ------------------------------
-
+    // ========== UI 업데이트 헬퍼 ==========
+    
     private void UpdateUI()
     {
         timerText.text = startTime.ToString();
+        UpdateMoneyUI();
+        bagText.text = $"{currentBag}/{maxBag}";
+        cartText.text = $"{currentCart}/{maxCart}";
+    }
+
+    private void UpdateMoneyUI()
+    {
         moneyText.text = "$" + currentMoney;
-        bagText.text = currentBag + "/" + maxBag;
-        cartText.text = currentCart + "/" + maxCart;
     }
 }

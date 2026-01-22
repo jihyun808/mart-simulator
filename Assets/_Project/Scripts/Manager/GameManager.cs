@@ -1,79 +1,38 @@
-// GameManager.cs
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
+/// <summary>
+/// 게임 전체 상태 관리 (일시정지, 게임오버, 클리어 등)
+/// Singleton 패턴 사용 - Scene당 하나만 존재
+/// </summary>
 public class GameManager : MonoBehaviour
 {
-    // ==================== Singleton ====================
     public static GameManager Instance { get; private set; }
 
-    // ==================== Game State ====================
     public enum GameState { Playing, Paused, GameOver, Clear }
     public static GameState State { get; private set; } = GameState.Playing;
 
-    // 편의 속성들
+    // 외부에서 상태 체크용
     public static bool GameIsPaused => State == GameState.Paused;
     public static bool IsGameOver => State == GameState.GameOver;
     public static bool IsGameClear => State == GameState.Clear;
     public static bool IsGameStopped => State == GameState.GameOver || State == GameState.Clear;
 
-    // ==================== UI Panels ====================
-    [Header("UI Panels")]
+    [Header("UI Panels - Inspector에서 연결 필수")]
     [SerializeField] private GameObject pauseMenuPanel;
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject clearPanel;
     [SerializeField] private GameObject settingsPanel;
     
-    [Header("Clear Panel Text")]
+    [Header("Clear Panel")]
     [SerializeField] private TMPro.TextMeshProUGUI clearStageText;
 
-    // ==================== Scene Settings ====================
     [Header("Scene Names")]
     [SerializeField] private string mainSceneName = "MainMenu";
     [SerializeField] private string settingsSceneName = "Settings";
 
-    // ==================== Unity Lifecycle ====================
     private void Awake()
-    {
-        InitializeSingleton();
-    }
-
-    private void OnEnable()
-    {
-        ResetGameState();
-    }
-
-    private void Start()
-    {
-        ResetGameState();
-    }
-
-    private void Update()
-    {
-        HandleEscapeInput();
-        
-        // 🔥 강제 디버깅: Clear/GameOver 상태 체크
-        if (State == GameState.Clear || State == GameState.GameOver)
-        {
-            // Time.timeScale이 0이 아니면 강제로 0으로
-            if (Time.timeScale != 0f)
-            {
-                Debug.LogError($"⚠️⚠️⚠️ {State} 상태인데 Time.timeScale = {Time.timeScale}! 강제로 0 설정!");
-                Time.timeScale = 0f;
-            }
-            
-            // 커서가 안 보이면 강제로 보이게
-            if (!Cursor.visible)
-            {
-                Debug.LogError("⚠️⚠️⚠️ 커서가 안 보임! 강제로 보이게 설정!");
-                SetCursorState(true);
-            }
-        }
-    }
-
-    // ==================== Initialization ====================
-    private void InitializeSingleton()
     {
         if (Instance == null)
         {
@@ -85,46 +44,48 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        ResetGameState();
+    }
+
+    private void Update()
+    {
+        HandleEscapeInput();
+        EnforceStoppedState();
+    }
+
+    // 게임 시작 시 초기 상태로 리셋
     private void ResetGameState()
     {
-        Debug.Log("🔄 ResetGameState 호출됨");
         State = GameState.Playing;
         Time.timeScale = 1f;
         SetCursorState(false);
         DeactivateAllPanels();
-        Debug.Log("✅ ResetGameState 완료");
     }
 
     private void DeactivateAllPanels()
     {
-        Debug.Log("--- 모든 패널 비활성화 시작 ---");
-        
-        if (pauseMenuPanel != null)
-            Debug.Log($"PauseMenuPanel: {pauseMenuPanel.activeSelf} → false");
         SetPanelActive(pauseMenuPanel, false);
-        
-        if (gameOverPanel != null)
-            Debug.Log($"GameOverPanel: {gameOverPanel.activeSelf} → false");
         SetPanelActive(gameOverPanel, false);
-        
-        if (clearPanel != null)
-            Debug.Log($"ClearPanel: {clearPanel.activeSelf} → false");
         SetPanelActive(clearPanel, false);
-        
-        if (settingsPanel != null)
-            Debug.Log($"SettingsPanel: {settingsPanel.activeSelf} → false");
         SetPanelActive(settingsPanel, false);
-        
-        Debug.Log("--- 모든 패널 비활성화 완료 ---");
     }
 
-    // ==================== Input Handling ====================
+    // GameOver/Clear 상태에서 Time.timeScale과 커서 강제 유지
+    private void EnforceStoppedState()
+    {
+        if (IsGameStopped)
+        {
+            if (Time.timeScale != 0f) Time.timeScale = 0f;
+            if (!Cursor.visible) SetCursorState(true);
+        }
+    }
+
+    // ESC 키 입력 처리
     private void HandleEscapeInput()
     {
-        if (!Input.GetKeyDown(KeyCode.Escape)) return;
-
-        // 게임 종료 상태에서는 ESC 무시
-        if (IsGameStopped) return;
+        if (!Input.GetKeyDown(KeyCode.Escape) || IsGameStopped) return;
 
         if (State == GameState.Playing)
         {
@@ -132,24 +93,20 @@ public class GameManager : MonoBehaviour
         }
         else if (State == GameState.Paused)
         {
-            HandlePausedEscape();
+            if (settingsPanel != null && settingsPanel.activeSelf)
+            {
+                CloseSettings();
+            }
+            else
+            {
+                Resume();
+            }
         }
     }
 
-    private void HandlePausedEscape()
-    {
-        // Settings가 열려있으면 Settings 닫기
-        if (settingsPanel != null && settingsPanel.activeSelf)
-        {
-            CloseSettings();
-        }
-        else
-        {
-            Resume();
-        }
-    }
-
-    // ==================== Game State Control ====================
+    // ========== Public Methods - UI 버튼에서 호출 ==========
+    
+    /// <summary>일시정지 (ESC 또는 버튼)</summary>
     public void Pause()
     {
         State = GameState.Paused;
@@ -157,148 +114,80 @@ public class GameManager : MonoBehaviour
         SetPanelActive(pauseMenuPanel, true);
     }
 
+    /// <summary>게임 재개</summary>
     public void Resume()
     {
         State = GameState.Playing;
-        ResumeGame();
+        Time.timeScale = 1f;
         SetPanelActive(pauseMenuPanel, false);
         SetPanelActive(settingsPanel, false);
         StartCoroutine(LockCursorNextFrame());
     }
 
+    /// <summary>게임 오버 처리</summary>
     public void GameOver()
     {
-        Debug.Log("========================================");
-        Debug.Log("🎮 GameOver() 호출됨!");
-        Debug.Log($"현재 State: {State}");
-        
         State = GameState.GameOver;
-        Debug.Log($"변경된 State: {State}");
-        
         StopGame();
-        Debug.Log($"Time.timeScale: {Time.timeScale}");
-        Debug.Log($"Cursor.visible: {Cursor.visible}");
-        Debug.Log($"Cursor.lockState: {Cursor.lockState}");
-        
-        Debug.Log("--- 패널 상태 변경 시작 ---");
-        
-        if (pauseMenuPanel != null)
-        {
-            Debug.Log($"PauseMenuPanel 끄기 전: {pauseMenuPanel.activeSelf}");
-            pauseMenuPanel.SetActive(false);
-            Debug.Log($"PauseMenuPanel 끈 후: {pauseMenuPanel.activeSelf}");
-        }
-        
-        if (gameOverPanel != null)
-        {
-            Debug.Log($"GameOverPanel 켜기 전: {gameOverPanel.activeSelf}");
-            gameOverPanel.SetActive(true);
-            Debug.Log($"GameOverPanel 켠 후: {gameOverPanel.activeSelf}");
-            Debug.Log($"GameOverPanel 이름: {gameOverPanel.name}");
-            Debug.Log($"GameOverPanel Transform: {gameOverPanel.transform.position}");
-        }
-        else
-        {
-            Debug.LogError("❌❌❌ gameOverPanel이 NULL입니다! Inspector에서 연결 확인 필요! ❌❌❌");
-        }
-        
-        Debug.Log("========================================");
+        SetPanelActive(pauseMenuPanel, false);
+        SetPanelActive(gameOverPanel, true);
     }
 
+    /// <summary>스테이지 클리어 (기본 Stage 1)</summary>
     public void GameClear()
     {
-        GameClear(1); // 기본값 스테이지 1
+        GameClear(1);
     }
     
+    /// <summary>스테이지 클리어 (스테이지 번호 지정)</summary>
     public void GameClear(int stageNumber)
     {
-        Debug.Log("========================================");
-        Debug.Log($"🎉 GameClear() 호출됨! Stage: {stageNumber}");
-        Debug.Log($"현재 State: {State}");
-        
         State = GameState.Clear;
-        Debug.Log($"변경된 State: {State}");
-        
         StopGame();
-        Debug.Log($"Time.timeScale: {Time.timeScale}");
-        Debug.Log($"Cursor.visible: {Cursor.visible}");
-        Debug.Log($"Cursor.lockState: {Cursor.lockState}");
+        SetPanelActive(pauseMenuPanel, false);
+        SetPanelActive(gameOverPanel, false);
         
-        Debug.Log("--- 패널 상태 변경 시작 ---");
-        
-        if (pauseMenuPanel != null)
-        {
-            Debug.Log($"PauseMenuPanel 끄기 전: {pauseMenuPanel.activeSelf}");
-            pauseMenuPanel.SetActive(false);
-            Debug.Log($"PauseMenuPanel 끈 후: {pauseMenuPanel.activeSelf}");
-        }
-        
-        if (gameOverPanel != null)
-        {
-            Debug.Log($"GameOverPanel 끄기 전: {gameOverPanel.activeSelf}");
-            gameOverPanel.SetActive(false);
-            Debug.Log($"GameOverPanel 끈 후: {gameOverPanel.activeSelf}");
-        }
-        
-        // Clear Text 업데이트
         if (clearStageText != null)
         {
             clearStageText.text = $"STAGE {stageNumber} CLEAR!";
-            Debug.Log($"ClearText 업데이트: STAGE {stageNumber} CLEAR!");
-        }
-        else
-        {
-            Debug.LogWarning("⚠️ clearStageText가 연결 안 됨!");
         }
         
-        if (clearPanel != null)
-        {
-            Debug.Log($"ClearPanel 켜기 전: {clearPanel.activeSelf}");
-            clearPanel.SetActive(true);
-            Debug.Log($"ClearPanel 켠 후: {clearPanel.activeSelf}");
-            Debug.Log($"ClearPanel 이름: {clearPanel.name}");
-            Debug.Log($"ClearPanel Transform: {clearPanel.transform.position}");
-        }
-        else
-        {
-            Debug.LogError("❌❌❌ clearPanel이 NULL입니다! Inspector에서 연결 확인 필요! ❌❌❌");
-        }
-        
-        Debug.Log("========================================");
+        SetPanelActive(clearPanel, true);
     }
 
-    // ==================== Settings Management ====================
+    /// <summary>설정 창 열기</summary>
     public void OpenSettings()
     {
         State = GameState.Paused;
         StopGame();
-        
         SetPanelActive(pauseMenuPanel, false);
         SetPanelActive(settingsPanel, true);
     }
 
+    /// <summary>설정 창 닫기</summary>
     public void CloseSettings()
     {
         SetPanelActive(settingsPanel, false);
         SetPanelActive(pauseMenuPanel, true);
-        
-        State = GameState.Paused;
-        StopGame();
     }
 
-    // ==================== Scene Management ====================
+    // ========== Scene 전환 메서드 ==========
+    
+    /// <summary>현재 씬 재시작</summary>
     public void OnClickRestart()
     {
         PrepareSceneTransition();
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
     
+    /// <summary>다음 스테이지로 이동</summary>
     public void OnClickNextStage()
     {
         PrepareSceneTransition();
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
+    /// <summary>설정 메뉴로 이동 (현재 씬 이름 저장)</summary>
     public void ToSettingMenu()
     {
         SceneHistory.LastSceneName = SceneManager.GetActiveScene().name;
@@ -307,6 +196,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(settingsSceneName);
     }
 
+    /// <summary>메인 메뉴로 이동</summary>
     public void ToMain()
     {
         PrepareSceneTransition();
@@ -314,6 +204,7 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(mainSceneName);
     }
 
+    /// <summary>게임 종료</summary>
     public void QuitGame()
     {
 #if UNITY_EDITOR
@@ -323,19 +214,16 @@ public class GameManager : MonoBehaviour
 #endif
     }
 
-    // ==================== Helper Methods ====================
+    // ========== Private Helper Methods ==========
+    
+    // 게임 정지 (Time.timeScale = 0, 커서 표시)
     private void StopGame()
     {
         Time.timeScale = 0f;
         SetCursorState(true);
-        Debug.Log($"🛑 StopGame 실행 - Time.timeScale: {Time.timeScale}, Cursor.visible: {Cursor.visible}");
     }
 
-    private void ResumeGame()
-    {
-        Time.timeScale = 1f;
-    }
-
+    // 씬 전환 준비 (상태 초기화)
     private void PrepareSceneTransition()
     {
         Time.timeScale = 1f;
@@ -343,12 +231,14 @@ public class GameManager : MonoBehaviour
         SetCursorState(true);
     }
 
+    // 커서 표시/잠금 상태 설정
     private void SetCursorState(bool visible)
     {
         Cursor.visible = visible;
         Cursor.lockState = visible ? CursorLockMode.None : CursorLockMode.Locked;
     }
 
+    // 패널 활성화/비활성화 (null 체크 포함)
     private void SetPanelActive(GameObject panel, bool active)
     {
         if (panel != null)
@@ -357,24 +247,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void LogPanelState(string panelName, GameObject panel)
-    {
-        if (panel != null)
-        {
-            Debug.Log($"✅ {panelName} 활성화 시도 - activeSelf: {panel.activeSelf}");
-        }
-        else
-        {
-            Debug.LogError($"❌ {panelName}이 NULL입니다! Inspector에서 연결 확인 필요!");
-        }
-    }
-
+    // 다음 프레임에 커서 잠금 (Resume 시 사용)
     private IEnumerator LockCursorNextFrame()
     {
         yield return null;
         SetCursorState(false);
     }
-
-    // ==================== Public Button Callbacks ====================
-    public void OnClickResume() => Resume();
 }
