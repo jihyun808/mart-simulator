@@ -1,6 +1,10 @@
-// PlayerThrowController.cs
 using UnityEngine;
 
+/// <summary>
+/// 플레이어 아이템 투척 및 휘두르기 제어
+/// 마우스 버튼 길게 누르기: 투척 / 짧게 누르기: 휘두르기
+/// 키 설정: Mouse 0 (좌클릭)
+/// </summary>
 public class PlayerThrowController : MonoBehaviour
 {
     [Header("References")]
@@ -16,7 +20,6 @@ public class PlayerThrowController : MonoBehaviour
     [SerializeField] private float minThrowForce = 5f;
     [SerializeField] private float maxThrowForce = 20f;
 
-    private InputHandler inputHandler;
     private float throwChargeTimer = 0f;
     private bool isCharging = false;
     private bool isSwinging = false;
@@ -24,8 +27,6 @@ public class PlayerThrowController : MonoBehaviour
 
     private void Start()
     {
-        inputHandler = GetComponent<InputHandler>();
-        
         if (pickupController == null)
             pickupController = GetComponent<PlayerPickupController>();
 
@@ -35,8 +36,7 @@ public class PlayerThrowController : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.GameIsPaused)
-            return;
+        if (GameManager.GameIsPaused) return;
 
         HandleThrowInput();
         UpdateSwing();
@@ -44,23 +44,21 @@ public class PlayerThrowController : MonoBehaviour
 
     private void HandleThrowInput()
     {
-        if (inputHandler == null) return;
-
         PickupableItem currentItem = pickupController?.GetCurrentItem();
         if (currentItem == null) return;
 
-        if (inputHandler.IsThrowPressed())
+        if (Input.GetMouseButtonDown(0))
         {
             isCharging = true;
             throwChargeTimer = 0f;
         }
 
-        if (Input.GetKey(InputSettings.Keys[Action.Throw]) && isCharging)
+        if (Input.GetMouseButton(0) && isCharging)
         {
             throwChargeTimer += Time.deltaTime;
         }
 
-        if (Input.GetKeyUp(InputSettings.Keys[Action.Throw]) && isCharging)
+        if (Input.GetMouseButtonUp(0) && isCharging)
         {
             isCharging = false;
 
@@ -136,6 +134,7 @@ public class PlayerThrowController : MonoBehaviour
         }
     }
 
+    /// <summary>현재 충전 진행도 (0~1) - UI 표시용</summary>
     public float GetChargePercent()
     {
         if (!isCharging) return 0f;

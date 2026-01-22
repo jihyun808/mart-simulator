@@ -1,6 +1,9 @@
-// CrushObject.cs
 using UnityEngine;
 
+/// <summary>
+/// 바닥과 충돌 시 스프라이트 이미지로 교체되는 오브젝트
+/// 깨진 물건 표현용 (와인병, 유리잔 등)
+/// </summary>
 public class CrushObject : MonoBehaviour
 {
     [Header("Replacement Settings")]
@@ -56,15 +59,7 @@ public class CrushObject : MonoBehaviour
 
         imageObject.transform.localScale = new Vector3(imageSize.x, imageSize.y, 1f);
         
-        AIController[] ais = FindObjectsOfType<AIController>();
-        foreach (var ai in ais)
-        {
-            PlayerSuspicionDetector detector = ai.GetComponent<PlayerSuspicionDetector>();
-            if (detector != null)
-            {
-                detector.OnObjectBreak();
-            }
-        }
+        NotifyAIControllers();
 
         if (destroyOriginal)
         {
@@ -73,6 +68,19 @@ public class CrushObject : MonoBehaviour
         else
         {
             gameObject.SetActive(false);
+        }
+    }
+
+    private void NotifyAIControllers()
+    {
+        AIController[] ais = FindObjectsOfType<AIController>();
+        foreach (var ai in ais)
+        {
+            PlayerSuspicionDetector detector = ai.GetComponent<PlayerSuspicionDetector>();
+            if (detector != null)
+            {
+                detector.OnObjectBreak();
+            }
         }
     }
 }

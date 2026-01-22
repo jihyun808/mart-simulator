@@ -2,36 +2,41 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 쇼핑 목록 아이템 (아이템 이름 + 필요 개수)
+/// currentAmount는 게임 중 자동 계산됨
+/// </summary>
 [Serializable]
 public class ShoppingItem
 {
-    public string itemName;      // 아이템 이름 (예: "와인잔") - 뒤에 x2 붙이지 마세요!
-    public int requiredAmount;   // 목표 개수 (예: 2)
+    public string itemName;
+    public int requiredAmount;
     
     [HideInInspector] 
-    public int currentAmount;    // 현재 먹은 개수 (게임 중 자동 계산됨)
+    public int currentAmount;
 
-    public bool IsComplete => currentAmount >= requiredAmount; // 다 모았는지 확인
+    public bool IsComplete => currentAmount >= requiredAmount;
 }
 
+/// <summary>
+/// 쇼핑 리스트 관리 (목표 아이템 추적)
+/// 인벤토리 변경 시 UpdateCheckList() 호출 필요
+/// </summary>
 public class ShoppingListManager : MonoBehaviour
 {
-    [Header("Shopping List")]
+    [Header("Shopping List Items")]
     public List<ShoppingItem> items = new List<ShoppingItem>();
 
     [Header("References")]
-    public Inventory playerInventory; // 플레이어 인벤토리 연결
+    public Inventory playerInventory;
 
-    // 인벤토리가 변할 때마다 호출되어 개수를 다시 셉니다.
+    /// <summary>
+    /// 인벤토리 변경 시 호출 - 현재 수집한 아이템 개수 재계산
+    /// </summary>
     public void UpdateCheckList()
     {
-        // 1. 개수 초기화
-        foreach (var item in items)
-        {
-            item.currentAmount = 0;
-        }
-
-        // 2. 플레이어 인벤토리 뒤져서 개수 세기
+        ResetCounts();
+        
         if (playerInventory != null)
         {
             foreach (var invItem in playerInventory.GetAllItems())
@@ -41,11 +46,18 @@ public class ShoppingListManager : MonoBehaviour
         }
     }
 
+    private void ResetCounts()
+    {
+        foreach (var item in items)
+        {
+            item.currentAmount = 0;
+        }
+    }
+
     private void CountItem(string targetName)
     {
         foreach (var shopItem in items)
         {
-            // 공백 제거하고 이름 비교 (실수 방지)
             if (shopItem.itemName.Trim() == targetName.Trim())
             {
                 shopItem.currentAmount++;

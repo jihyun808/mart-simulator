@@ -1,10 +1,14 @@
-// MovementCharacterController.cs
 using UnityEngine;
 using System.Collections;
 
+/// <summary>
+/// 캐릭터 이동, 점프, 앉기, 슬라이드 처리
+/// CharacterController 기반 물리 움직임
+/// </summary>
 [RequireComponent(typeof(CharacterController))]
 public class MovementCharacterController : MonoBehaviour
 {
+    [Header("Movement Settings")]
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float jumpForce = 8f;
     [SerializeField] private float gravity = -20f;
@@ -15,11 +19,11 @@ public class MovementCharacterController : MonoBehaviour
     [SerializeField] private float crouchSpeed = 1.0f;
 
     [Header("Slide Settings")]
-    [SerializeField] private float slideDeceleration = 5f; 
-    [SerializeField] private float minSlideSpeed = 0.1f;   
+    [SerializeField] private float slideDeceleration = 5f;
+    [SerializeField] private float minSlideSpeed = 0.1f;
 
     private Vector3 moveForce;
-    private Vector3 slideVelocity; 
+    private Vector3 slideVelocity;
     private CharacterController characterController;
     private bool isCrouching = false;
     private bool isTransitioning = false;
@@ -48,6 +52,15 @@ public class MovementCharacterController : MonoBehaviour
 
     private void Update()
     {
+        ApplyGravity();
+        ApplySlideDeceleration();
+
+        Vector3 finalMove = moveForce + slideVelocity;
+        characterController.Move(finalMove * Time.deltaTime);
+    }
+
+    private void ApplyGravity()
+    {
         if (!characterController.isGrounded)
         {
             moveForce.y += gravity * Time.deltaTime;
@@ -56,7 +69,10 @@ public class MovementCharacterController : MonoBehaviour
         {
             moveForce.y = -2f;
         }
+    }
 
+    private void ApplySlideDeceleration()
+    {
         if (slideVelocity.magnitude > minSlideSpeed)
         {
             slideVelocity = Vector3.Lerp(slideVelocity, Vector3.zero, slideDeceleration * Time.deltaTime);
@@ -65,11 +81,9 @@ public class MovementCharacterController : MonoBehaviour
         {
             slideVelocity = Vector3.zero;
         }
-
-        Vector3 finalMove = moveForce + slideVelocity;
-        characterController.Move(finalMove * Time.deltaTime);
     }
 
+    /// <summary>이동 방향 설정 (PlayerController에서 호출)</summary>
     public void MoveTo(Vector3 direction)
     {
         direction = transform.rotation * new Vector3(direction.x, 0, direction.z);
@@ -79,7 +93,7 @@ public class MovementCharacterController : MonoBehaviour
         if (direction.magnitude > 0.01f)
         {
             moveForce = new Vector3(direction.x * currentSpeed, moveForce.y, direction.z * currentSpeed);
-            slideVelocity = new Vector3(moveForce.x, 0, moveForce.z);  
+            slideVelocity = new Vector3(moveForce.x, 0, moveForce.z);
         }
         else
         {
@@ -87,6 +101,7 @@ public class MovementCharacterController : MonoBehaviour
         }
     }
 
+    /// <summary>점프 실행 (지상 & 서있을 때만)</summary>
     public void Jump()
     {
         if (characterController.isGrounded && !isCrouching)
@@ -95,21 +110,18 @@ public class MovementCharacterController : MonoBehaviour
         }
     }
 
+    /// <summary>앉기/일어서기 설정</summary>
     public void SetCrouch(bool crouch)
     {
-        if (isTransitioning) return;
-        if (isCrouching == crouch) return;
+        if (isTransitioning || isCrouching == crouch) return;
 
         if (crouch)
         {
             StartCoroutine(CrouchDownSmoothly());
         }
-        else
+        else if (CanStandUp())
         {
-            if (CanStandUp())
-            {
-                StartCoroutine(StandUpSmoothly());
-            }
+            StartCoroutine(StandUpSmoothly());
         }
     }
 
@@ -119,12 +131,10 @@ public class MovementCharacterController : MonoBehaviour
         isCrouching = true;
 
         float crouchRatio = crouchingHeight / standingHeight;
-        float startScale = 1f;
-        float targetScale = crouchRatio;
         float duration = 0.2f;
         float elapsed = 0f;
 
-        Vector3 startCameraPos = cameraTransform != null ? cameraTransform.localPosition : Vector3.zero;
+        Vector3 startCameraPos = cameraTransform?.localPosition ?? Vector3.zero;
         float heightDifference = standingHeight - crouchingHeight;
         Vector3 targetCameraPos = cameraTransform != null ?
             new Vector3(startCameraPos.x, originalCameraY - (heightDifference * 0.7f), startCameraPos.z) : Vector3.zero;
@@ -134,16 +144,14 @@ public class MovementCharacterController : MonoBehaviour
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float progress = elapsed / duration;
-            float smoothProgress = Mathf.Pow(progress, 2f);
+            float smoothProgress = Mathf.Pow(elapsed / duration, 2f);
 
-            float currentScale = Mathf.Lerp(startScale, targetScale, smoothProgress);
+            float currentScale = Mathf.Lerp(1f, crouchRatio, smoothProgress);
             transform.localScale = new Vector3(transform.localScale.x, currentScale, transform.localScale.z);
 
             if (cameraTransform != null)
             {
-                Vector3 newCameraPos = Vector3.Lerp(startCameraPos, targetCameraPos, smoothProgress);
-                cameraTransform.localPosition = newCameraPos;
+                cameraTransform.localPosition = Vector3.Lerp(startCameraPos, targetCameraPos, smoothProgress);
             }
 
             yield return null;
@@ -163,28 +171,24 @@ public class MovementCharacterController : MonoBehaviour
         isTransitioning = true;
 
         float crouchRatio = crouchingHeight / standingHeight;
-        float startScale = crouchRatio;
-        float targetScale = 1f;
         float duration = 0.3f;
         float elapsed = 0f;
 
-        Vector3 startCameraPos = cameraTransform != null ? cameraTransform.localPosition : Vector3.zero;
+        Vector3 startCameraPos = cameraTransform?.localPosition ?? Vector3.zero;
         Vector3 targetCameraPos = cameraTransform != null ?
             new Vector3(startCameraPos.x, originalCameraY, startCameraPos.z) : Vector3.zero;
 
         while (elapsed < duration)
         {
             elapsed += Time.deltaTime;
-            float progress = elapsed / duration;
-            float smoothProgress = 1f - Mathf.Pow(1f - progress, 3f);
+            float smoothProgress = 1f - Mathf.Pow(1f - (elapsed / duration), 3f);
 
-            float currentScale = Mathf.Lerp(startScale, targetScale, smoothProgress);
+            float currentScale = Mathf.Lerp(crouchRatio, 1f, smoothProgress);
             transform.localScale = new Vector3(transform.localScale.x, currentScale, transform.localScale.z);
 
             if (cameraTransform != null)
             {
-                Vector3 newCameraPos = Vector3.Lerp(startCameraPos, targetCameraPos, smoothProgress);
-                cameraTransform.localPosition = newCameraPos;
+                cameraTransform.localPosition = Vector3.Lerp(startCameraPos, targetCameraPos, smoothProgress);
             }
 
             yield return null;
@@ -204,10 +208,7 @@ public class MovementCharacterController : MonoBehaviour
     {
         Vector3 headPosition = transform.position + Vector3.up * standingHeight;
         float checkRadius = characterController.radius * 0.8f;
-
-        bool canStand = !Physics.CheckSphere(headPosition, checkRadius);
-
-        return canStand;
+        return !Physics.CheckSphere(headPosition, checkRadius);
     }
 
     private void OnDrawGizmosSelected()

@@ -1,152 +1,91 @@
-// ControlsSettings.cs
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
 
-[Serializable]
-public class KeyBindingWidget
-{
-    public Action action;
-    public Button button;
-    public TMP_Text label;
-}
-
+/// <summary>
+/// 마우스 설정 관리 (감도, Y축 반전)
+/// PlayerPrefs로 저장/불러오기
+/// Static 속성으로 게임 내에서 접근 가능
+/// </summary>
 public class ControlsSettings : MonoBehaviour
 {
-    [Header("Mouse Settings")]
+    [Header("Mouse Settings - Inspector에서 연결")]
     [SerializeField] private Slider mouseSensitivitySlider;
     [SerializeField] private Toggle invertYToggle;
 
-    [Header("Key Bindings")]
-    [SerializeField] private List<KeyBindingWidget> keyBindingWidgets;
+    private const string PREF_MOUSE_SENSITIVITY = "MOUSE_SENSITIVITY";
+    private const string PREF_INVERT_Y = "INVERT_Y";
 
-    private bool isRebinding = false;
-    private Action currentAction;
+    public static float MouseSensitivity { get; private set; } = 2f;
+    public static bool InvertY { get; private set; } = false;
 
     private void Awake()
     {
-        if (mouseSensitivitySlider != null)
-        {
-            mouseSensitivitySlider.minValue = 0.1f;
-            mouseSensitivitySlider.maxValue = 3f;
-            mouseSensitivitySlider.value = InputSettings.MouseSensitivity;
-            mouseSensitivitySlider.onValueChanged.AddListener(OnMouseSensitivityChanged);
-        }
-
-        if (invertYToggle != null)
-        {
-            invertYToggle.isOn = InputSettings.InvertY;
-            invertYToggle.onValueChanged.AddListener(OnInvertYChanged);
-        }
-
-        foreach (var widget in keyBindingWidgets)
-        {
-            UpdateKeyLabel(widget);
-            var capturedAction = widget.action;
-            widget.button.onClick.AddListener(() => BeginRebind(capturedAction));
-        }
+        LoadSettings();
+        InitMouseSensitivitySlider();
+        InitInvertYToggle();
     }
 
-    private void Update()
+    private void OnDestroy()
     {
-        if (!isRebinding) return;
+        if (mouseSensitivitySlider != null)
+            mouseSensitivitySlider.onValueChanged.RemoveListener(OnMouseSensitivityChanged);
 
-        if (Input.anyKeyDown)
-        {
-            KeyCode pressedKey = DetectPressedKey();
-            if (pressedKey != KeyCode.None)
-            {
-                ApplyRebind(pressedKey);
-            }
-        }
+        if (invertYToggle != null)
+            invertYToggle.onValueChanged.RemoveListener(OnInvertYChanged);
+    }
+
+    private void LoadSettings()
+    {
+        MouseSensitivity = PlayerPrefs.GetFloat(PREF_MOUSE_SENSITIVITY, 2f);
+        InvertY = PlayerPrefs.GetInt(PREF_INVERT_Y, 0) == 1;
+    }
+
+    private void InitMouseSensitivitySlider()
+    {
+        if (mouseSensitivitySlider == null) return;
+
+        mouseSensitivitySlider.minValue = 0.1f;
+        mouseSensitivitySlider.maxValue = 5f;
+        mouseSensitivitySlider.value = MouseSensitivity;
+        mouseSensitivitySlider.onValueChanged.AddListener(OnMouseSensitivityChanged);
+    }
+
+    private void InitInvertYToggle()
+    {
+        if (invertYToggle == null) return;
+
+        invertYToggle.isOn = InvertY;
+        invertYToggle.onValueChanged.AddListener(OnInvertYChanged);
     }
 
     private void OnMouseSensitivityChanged(float value)
     {
-        InputSettings.SaveMouseSensitivity(value);
+        MouseSensitivity = value;
+        PlayerPrefs.SetFloat(PREF_MOUSE_SENSITIVITY, value);
+        PlayerPrefs.Save();
     }
 
     private void OnInvertYChanged(bool invert)
     {
-        InputSettings.SaveInvertY(invert);
-    }
-
-    private void BeginRebind(Action action)
-    {
-        if (isRebinding) return;
-
-        isRebinding = true;
-        currentAction = action;
-
-        var widget = keyBindingWidgets.Find(w => w.action == action);
-        if (widget != null && widget.label != null)
-        {
-            widget.label.text = "Press Key...";
-        }
-    }
-
-    private KeyCode DetectPressedKey()
-    {
-        foreach (KeyCode code in Enum.GetValues(typeof(KeyCode)))
-        {
-            if (Input.GetKeyDown(code))
-            {
-                return code;
-            }
-        }
-        return KeyCode.None;
-    }
-
-    private void ApplyRebind(KeyCode newKey)
-    {
-        isRebinding = false;
-        InputSettings.SaveKey(currentAction, newKey);
-
-        var widget = keyBindingWidgets.Find(w => w.action == currentAction);
-        if (widget != null)
-        {
-            UpdateKeyLabel(widget);
-        }
-    }
-
-    private void UpdateKeyLabel(KeyBindingWidget widget)
-    {
-        if (widget.label == null) return;
-
-        KeyCode key = InputSettings.Keys[widget.action];
-        widget.label.text = KeyCodeToString(key);
-    }
-
-    private string KeyCodeToString(KeyCode code)
-    {
-        switch (code)
-        {
-            case KeyCode.LeftShift: return "Left Shift";
-            case KeyCode.RightShift: return "Right Shift";
-            case KeyCode.LeftControl: return "Left Ctrl";
-            case KeyCode.RightControl: return "Right Ctrl";
-            case KeyCode.Space: return "Space";
-            case KeyCode.Mouse0: return "Left Click";
-            case KeyCode.Mouse1: return "Right Click";
-            default: return code.ToString();
-        }
+        InvertY = invert;
+        PlayerPrefs.SetInt(PREF_INVERT_Y, invert ? 1 : 0);
+        PlayerPrefs.Save();
     }
 
     public void ResetToDefaults()
     {
-        InputSettings.ResetToDefaults();
-
         if (mouseSensitivitySlider != null)
-            mouseSensitivitySlider.value = InputSettings.MouseSensitivity;
+        {
+            mouseSensitivitySlider.value = 2f;
+        }
 
         if (invertYToggle != null)
-            invertYToggle.isOn = InputSettings.InvertY;
-
-        foreach (var widget in keyBindingWidgets)
         {
-            UpdateKeyLabel(widget);
+            invertYToggle.isOn = false;
         }
+
+        PlayerPrefs.DeleteKey(PREF_MOUSE_SENSITIVITY);
+        PlayerPrefs.DeleteKey(PREF_INVERT_Y);
+        PlayerPrefs.Save();
     }
 }

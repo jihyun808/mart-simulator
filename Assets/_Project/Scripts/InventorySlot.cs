@@ -1,34 +1,30 @@
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 인벤토리 슬롯 하나를 담당 (아이템 아이콘 표시/숨김)
+/// </summary>
 public class InventorySlot : MonoBehaviour
 {
-    // 슬롯 안에 있는 "아이템 그림 보여줄 Image 컴포넌트"
-    public Image iconImage; 
+    [Header("Icon Image - Inspector에서 연결")]
+    public Image iconImage;
 
+    /// <summary>아이템 아이콘 설정 및 표시</summary>
     public void SetItem(Sprite sprite)
     {
-        if (iconImage != null)
-        {
-            iconImage.sprite = sprite;
-            
-            // 색상을 하얀색(불투명)으로 변경 (중요!)
-            iconImage.color = new Color(1, 1, 1, 1); 
-            
-            // 켜기
-            iconImage.enabled = true;
-        }
+        if (iconImage == null) return;
+
+        iconImage.sprite = sprite;
+        iconImage.color = Color.white;
+        iconImage.enabled = true;
     }
 
+    /// <summary>슬롯 비우기 (아이콘 숨김)</summary>
     public void Clear()
     {
-        if (iconImage != null)
-        {
-            iconImage.sprite = null;
-            
-            // 끄거나 투명하게 (보통 끄는 게 성능상 좋음)
-            iconImage.enabled = false; 
-            // 혹은 iconImage.color = new Color(1, 1, 1, 0);
-        }
+        if (iconImage == null) return;
+
+        iconImage.sprite = null;
+        iconImage.enabled = false;
     }
 }

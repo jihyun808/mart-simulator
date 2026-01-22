@@ -1,40 +1,29 @@
-// PlayerPickupController.cs
 using UnityEngine;
 
+/// <summary>
+/// 플레이어 아이템 집기/놓기 제어
+/// 키 설정: E(인벤토리 추가), Mouse 1(집기/놓기)
+/// </summary>
 public class PlayerPickupController : MonoBehaviour
 {
     [Header("Settings")]
     [SerializeField] private Transform hand;
     [SerializeField] private float pickupRange = 3f;
     [SerializeField] private LayerMask pickupLayer;
-    
+
     private PickupableItem currentItem = null;
     private Camera cam;
     private Inventory inventory;
-    private InputHandler inputHandler;
 
     private void Start()
     {
         cam = Camera.main;
         inventory = GetComponent<Inventory>();
-        inputHandler = GetComponent<InputHandler>();
-        
-        // ✅ 추천: 런타임 AddComponent 제거, 에러 로그로 변경
-        if (inventory == null)
-        {
-            Debug.LogError("❌ Player에 Inventory 컴포넌트가 없습니다! (Inspector에서 추가하세요)");
-        }
-        
-        if (inputHandler == null)
-        {
-            Debug.LogError("❌ Player에 InputHandler 컴포넌트가 없습니다!");
-        }
     }
 
     private void Update()
     {
-        if (GameManager.GameIsPaused)
-            return;
+        if (GameManager.GameIsPaused) return;
 
         HandleInventoryInput();
         HandlePickupInput();
@@ -62,14 +51,7 @@ public class PlayerPickupController : MonoBehaviour
 
     private void HandleInventoryInput()
     {
-        // ✅ 1단계: E키 입력 확인 로그
-        if (inputHandler != null && inputHandler.IsInteractPressed())
-        {
-            Debug.Log("✅ Interact(E) pressed!");
-        }
-        
-        // ✅ 2단계: 인벤토리 추가 시도
-        if (inputHandler != null && inputHandler.IsInteractPressed() && currentItem != null)
+        if (Input.GetKeyDown(KeyCode.E) && currentItem != null)
         {
             AddToInventory();
         }
@@ -77,12 +59,16 @@ public class PlayerPickupController : MonoBehaviour
 
     private void HandlePickupInput()
     {
-        if (inputHandler != null && inputHandler.IsGrabPressed())
+        if (Input.GetMouseButtonDown(1))
         {
             if (currentItem == null)
+            {
                 TryPickup();
+            }
             else
+            {
                 DropItem();
+            }
         }
     }
 
@@ -97,7 +83,6 @@ public class PlayerPickupController : MonoBehaviour
             {
                 currentItem = item;
                 currentItem.PickUp(hand);
-                Debug.Log($"📦 아이템 집음: {currentItem.itemName}");
             }
         }
     }
@@ -106,7 +91,6 @@ public class PlayerPickupController : MonoBehaviour
     {
         if (currentItem != null)
         {
-            Debug.Log($"📦 아이템 놓음: {currentItem.itemName}");
             currentItem.Drop();
             currentItem = null;
         }
@@ -116,25 +100,10 @@ public class PlayerPickupController : MonoBehaviour
     {
         if (currentItem != null && inventory != null)
         {
-            // ✅ AddItem 성공 여부 확인 로그
-            bool ok = inventory.AddItem(currentItem);
-            Debug.Log($"🧺 AddItem 결과={ok}, item={currentItem.itemName}");
-            
-            if (ok)
+            if (inventory.AddItem(currentItem))
             {
                 currentItem = null;
             }
-            else
-            {
-                Debug.LogWarning($"⚠️ 인벤토리에 {currentItem.itemName} 추가 실패!");
-            }
-        }
-        else
-        {
-            if (currentItem == null)
-                Debug.LogWarning("⚠️ currentItem이 null입니다!");
-            if (inventory == null)
-                Debug.LogWarning("⚠️ inventory가 null입니다!");
         }
     }
 
