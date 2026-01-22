@@ -5,9 +5,6 @@ public class CashierInteraction : MonoBehaviour
     [Header("Quest Check")]
     [SerializeField] private QuestItemChecker questChecker;
 
-    [Header("Clear UI")]
-    [SerializeField] private ClearUIManager clearUI;
-
     [Header("Events")]
     public System.Action OnQuestComplete;
     public System.Action OnItemsMissing;
@@ -15,23 +12,23 @@ public class CashierInteraction : MonoBehaviour
 
     private void Start()
     {
-        if (clearUI != null)
+        // GameManager만 호출 (ClearUIManager는 사용 안 함)
+        OnQuestComplete += () => 
         {
-            OnQuestComplete += () => 
+            Debug.Log("⭐⭐⭐ OnQuestComplete 실행됨!");
+            
+            if (GameManager.Instance != null)
             {
-                clearUI.ShowClearUI(1);
-                
-                // ✅ 게임 클리어 처리 (커서 풀고, 시간 멈추기)
-                if (GameManager.Instance != null)
-                {
-                    GameManager.Instance.GameClear();
-                }
-            };
-        }
-        else
-        {
-            Debug.LogWarning("⚠️ clearUI가 연결 안 됨! (CashierInteraction 인스펙터에서 연결하세요)");
-        }
+                Debug.Log("⭐ GameManager.GameClear() 호출 시작");
+                GameManager.Instance.GameClear(1); // 스테이지 1
+                Debug.Log("⭐ GameManager.GameClear() 호출 완료");
+                Debug.Log($"⭐ Time.timeScale 확인: {Time.timeScale}");
+            }
+            else
+            {
+                Debug.LogError("❌ GameManager.Instance가 NULL!");
+            }
+        };
     }
 
     public void TryCheckoutByClick()
