@@ -15,8 +15,9 @@ public class PickupableItem : MonoBehaviour
     [Header("Inventory Icon")]
     public Sprite itemIcon;
 
-    [Header("Drop Settings")]
+    [Header("Timing Windows")]
     public float justDroppedWindow = 0.6f;
+    public float justPickedUpWindow = 0.3f;
 
     private Rigidbody rb;
     private Transform originalParent;
@@ -24,6 +25,7 @@ public class PickupableItem : MonoBehaviour
     private Quaternion originalRotation;
     private bool isCarried = false;
     private float lastDroppedTime = -999f;
+    private float lastPickedUpTime = -999f;
     private int pickupLayer;
     private int carriedLayer;
 
@@ -43,6 +45,8 @@ public class PickupableItem : MonoBehaviour
     {
         if (isCarried) return;
         isCarried = true;
+
+        lastPickedUpTime = Time.time;
 
         if (carriedLayer != -1)
         {
@@ -99,6 +103,13 @@ public class PickupableItem : MonoBehaviour
     {
         if (window <= 0f) window = justDroppedWindow;
         return Time.time - lastDroppedTime <= window;
+    }
+
+    /// <summary>방금 집었는지 확인 (카트 적재 방지용)</summary>
+    public bool WasJustPickedUp(float window = -1f)
+    {
+        if (window <= 0f) window = justPickedUpWindow;
+        return Time.time - lastPickedUpTime <= window;
     }
 
     public bool IsCarried() => isCarried;
