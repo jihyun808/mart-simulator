@@ -22,6 +22,7 @@ public class CartInventory : MonoBehaviour
     public string storedLayerName = "Ignore Raycast"; // ✅ 저장 중 레이어
     // 원하면 "LoadedItem" 같은 네 레이어로 바꿔도 됨
 
+    
     private readonly Stack<PickupableItem> _stored = new();
 
     private class SavedState
@@ -207,5 +208,32 @@ public class CartInventory : MonoBehaviour
 
         Debug.Log($"[CartInventory] Restored: {pick.name}, layer={LayerMask.LayerToName(pick.gameObject.layer)}");
 
+    }
+
+        public bool TryStealOne(out PickupableItem stolenItem)
+    {
+        stolenItem = null;
+
+        if (_stored.Count == 0)
+            return false;
+
+        // 1️⃣ 아이템 꺼내기
+        stolenItem = _stored.Pop();
+
+        // 2️⃣ capacity 되돌리기 (있다면)
+        int cost = 1;
+        var carry = stolenItem.GetComponent<CarryableItem>();
+        if (carry) cost = carry.capacityCost;
+
+        CapacityUsed = Mathf.Max(0, CapacityUsed - cost);
+        onCapacityChanged?.Invoke(CapacityUsed, capacityMax);
+
+        // 3️⃣ 저장 상태 복구 (렌더러 / 콜라이더 / 레이어 / Rigidbody)
+        if (hideItemInScene)
+            RestoreAfterStorage(stolenItem);
+
+        Debug.Log($"[CartInventory] ❌ Stolen: {stolenItem.name} (used {CapacityUsed}/{capacityMax})");
+
+        return true;
     }
 }
