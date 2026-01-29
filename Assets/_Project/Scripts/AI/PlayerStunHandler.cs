@@ -1,22 +1,41 @@
 using UnityEngine;
 using System.Collections;
-using System.Collections.Generic; // 리스트 사용
+using System.Collections.Generic;
 
+/// <summary>
+/// 플레이어 기절 처리 (AI에게 잡혔을 때)
+/// 기절 시 인벤토리 아이템 절반 드롭 + 화면 암전
+/// </summary>
 public class PlayerStunHandler : MonoBehaviour
 {
     [Header("Stun Settings")]
     [SerializeField] private float stunDuration = 3f;
 
+    [Header("Item Drop Settings")]
+    [SerializeField] private float dropRadius = 1.5f;
+    [SerializeField] private float dropHeight = 1.0f;
+    [SerializeField] private float dropForce = 2f;
+
     private bool isStunned = false;
     private PlayerController playerController;
     private Inventory inventory;
+    private StunScreenEffect screenEffect;
 
     private void Start()
     {
         playerController = GetComponent<PlayerController>();
         inventory = GetComponent<Inventory>();
+        
+        // ✅ 화면 암전 컴포넌트 찾기/생성
+        screenEffect = FindObjectOfType<StunScreenEffect>();
+        if (screenEffect == null)
+        {
+            GameObject effectObj = new GameObject("Stun Screen Effect");
+            screenEffect = effectObj.AddComponent<StunScreenEffect>();
+        }
     }
 
+    /// <summary>기절 시작 (AIController에서 호출)</summary>
     public void Stun(float duration)
     {
         if (isStunned) return;
@@ -27,67 +46,67 @@ public class PlayerStunHandler : MonoBehaviour
     {
         isStunned = true;
 
-        if (playerController != null) playerController.enabled = false;
+        // ✅ 화면 암전 시작
+        if (screenEffect != null)
+        {
+            screenEffect.StartStun(duration);
+        }
 
-        DropRandomItems(); // 아이템 떨구기
+        if (playerController != null)
+        {
+            playerController.enabled = false;
+        }
 
-        Debug.Log($"[Player] 기절! {duration}초 간 불능");
+        DropRandomItems();
 
         yield return new WaitForSeconds(duration);
 
-        if (playerController != null) playerController.enabled = true;
+        if (playerController != null)
+        {
+            playerController.enabled = true;
+        }
 
         isStunned = false;
-        Debug.Log("[Player] 기절 회복!");
     }
 
     private void DropRandomItems()
     {
         if (inventory == null) return;
 
-        // 1. 현재 가지고 있는 모든 아이템을 리스트로 가져옵니다.
         List<PickupableItem> currentItems = inventory.GetAllItems();
         int itemCount = currentItems.Count;
 
         if (itemCount == 0) return;
 
-        // 절반 정도 떨어뜨림 (최소 1개)
         int itemsToDropCount = Mathf.Max(1, itemCount / 2);
-
-        Debug.Log($"충격으로 인해 아이템 {itemsToDropCount}개를 떨어뜨립니다!");
 
         for (int i = 0; i < itemsToDropCount; i++)
         {
-            // 다시 목록 갱신 (하나 떨구면 리스트가 변하니까)
             currentItems = inventory.GetAllItems();
             if (currentItems.Count == 0) break;
 
-            // 2. 랜덤하게 하나 고름 (빈 슬롯 걱정 없음)
             int randomIndex = Random.Range(0, currentItems.Count);
             PickupableItem itemToDrop = currentItems[randomIndex];
 
-            // 3. 인벤토리에서 제거
             inventory.RemoveItem(itemToDrop);
 
-            // 4. 월드에 다시 뿌리기
-            itemToDrop.gameObject.SetActive(true);
-            
-            // 위치: 플레이어 주변 랜덤 위치
-            itemToDrop.transform.position = transform.position + Random.insideUnitSphere * 1.5f;
-            // 높이 보정 (땅 밑으로 안 꺼지게)
-            itemToDrop.transform.position = new Vector3(
-                itemToDrop.transform.position.x,
-                transform.position.y + 1.0f,
-                itemToDrop.transform.position.z
-            );
+            DropItemToWorld(itemToDrop);
+        }
+    }
 
-            // 물리 힘 가하기 (튕겨나가는 효과)
-            Rigidbody rb = itemToDrop.GetComponent<Rigidbody>();
-            if (rb != null)
-            {
-                rb.isKinematic = false;
-                rb.AddForce(Vector3.up * 2f + Random.insideUnitSphere * 2f, ForceMode.Impulse);
-            }
+    private void DropItemToWorld(PickupableItem item)
+    {
+        item.gameObject.SetActive(true);
+
+        Vector3 dropPosition = transform.position + Random.insideUnitSphere * dropRadius;
+        dropPosition.y = transform.position.y + dropHeight;
+        item.transform.position = dropPosition;
+
+        Rigidbody rb = item.GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.isKinematic = false;
+            rb.AddForce(Vector3.up * dropForce + Random.insideUnitSphere * dropForce, ForceMode.Impulse);
         }
     }
 
