@@ -164,14 +164,34 @@ public class AIController : MonoBehaviour
         }
     }
 
-    private void UpdateAnimation()
-    {
-        if (anim == null) return;
+ private void UpdateAnimation()
+{
+    if (anim == null) return;
 
-        float currentSpeed = agent.velocity.magnitude;
-        anim.SetFloat("Speed", currentSpeed);
+    float currentMoveSpeed = 0f;
+    bool isChasing = (currentState == AIState.Chase); // 현재 상태가 Chase인지 확인
+
+    switch (currentState)
+    {
+        case AIState.Approach:
+            currentMoveSpeed = approachSpeed;
+            break;
+        case AIState.Watching:
+            float dist = Vector3.Distance(transform.position, player.position);
+            currentMoveSpeed = (dist > watchDistance * 1.5f || dist < watchDistance * 0.5f) ? watchSpeed : 0f;
+            break;
+        case AIState.Chase:
+            currentMoveSpeed = chaseSpeed;
+            break;
+        case AIState.Return:
+            currentMoveSpeed = returnSpeed;
+            break;
     }
 
+    // 애니메이터에 파라미터 전달
+    anim.SetFloat("Speed", currentMoveSpeed);
+    anim.SetBool("IsChasing", isChasing); // Chase 상태일 때만 true가 됨
+}
     private void HandleIdle()
     {
         agent.isStopped = true;
