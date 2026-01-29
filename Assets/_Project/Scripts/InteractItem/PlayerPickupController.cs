@@ -2,7 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// 플레이어 아이템 집기/놓기 제어
-/// 키 설정: E(인벤토리 추가), Mouse 1(집기/놓기)
+/// 수정: E키 기능 삭제 (인벤토리 기능은 PlayerInteraction에서 F1~F4로만 처리)
 /// </summary>
 public class PlayerPickupController : MonoBehaviour
 {
@@ -13,53 +13,41 @@ public class PlayerPickupController : MonoBehaviour
 
     private PickupableItem currentItem = null;
     private Camera cam;
-    private Inventory inventory;
+    
+    // Inventory 참조가 더 이상 필요 없어서 삭제 (PlayerInteraction이 담당)
 
     private void Start()
     {
         cam = Camera.main;
-        inventory = GetComponent<Inventory>();
     }
 
     private void Update()
     {
         if (GameManager.GameIsPaused) return;
 
-        HandleInventoryInput();
+        // HandleInventoryInput();  <-- ⭐ 삭제됨! (E키 제거)
         HandlePickupInput();
     }
 
     public void ForcePickUp(PickupableItem item)
-{
-    if (item == null) return;
-
-    // 이미 들고 있던 아이템이 있으면 정리
-    if (currentItem != null)
     {
-        currentItem.Drop();
-        currentItem = null;
-    }
+        if (item == null) return;
 
-    // ✅ 핵심: PlayerPickupController의 상태를 갱신
-    currentItem = item;
-
-    // ✅ 손에 장착
-    item.PickUp(hand);
-
-    Debug.Log($"[ForcePickUp] {item.name} picked up via Cart");
-}
-
-    private void HandleInventoryInput()
-    {
-        if (Input.GetKeyDown(KeyCode.E) && currentItem != null)
+        if (currentItem != null)
         {
-            AddToInventory();
+            currentItem.Drop();
+            currentItem = null;
         }
+
+        currentItem = item;
+        item.PickUp(hand);
+        Debug.Log($"[ForcePickUp] {item.name} picked up via Cart");
     }
 
     private void HandlePickupInput()
     {
-        if (Input.GetMouseButtonDown(1))
+        // 마우스 우클릭(1)으로 집기/놓기 (원하신다면 0으로 변경 가능)
+        if (Input.GetMouseButtonDown(1)) 
         {
             if (currentItem == null)
             {
@@ -96,16 +84,7 @@ public class PlayerPickupController : MonoBehaviour
         }
     }
 
-    private void AddToInventory()
-    {
-        if (currentItem != null && inventory != null)
-        {
-            if (inventory.AddItem(currentItem))
-            {
-                currentItem = null;
-            }
-        }
-    }
+    // AddToInventory 함수 삭제됨 (더 이상 여기서 처리하지 않음)
 
     public PickupableItem GetCurrentItem()
     {

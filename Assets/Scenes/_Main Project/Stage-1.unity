@@ -1900,6 +1900,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   hideItemInScene: 1
+  justDroppedWindow: 0.6
+  changeLayerWhileStored: 1
+  storedLayerName: Ignore Raycast
 --- !u!114 &52952843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2986,6 +2989,7 @@ GameObject:
   m_Component:
   - component: {fileID: 87829222}
   - component: {fileID: 87829221}
+  - component: {fileID: 87829223}
   m_Layer: 0
   m_Name: ShoppingSystem
   m_TagString: Untagged
@@ -3009,6 +3013,24 @@ MonoBehaviour:
   - itemName: "\uBC14\uB098\uB098"
     requiredAmount: 1
     currentAmount: 0
+  - itemName: "\uCEE4\uD53C"
+    requiredAmount: 1
+    currentAmount: 0
+  - itemName: "\uD504\uB9C1\uAE00\uC2A4"
+    requiredAmount: 1
+    currentAmount: 0
+  - itemName: "\uC640\uC778\uC794"
+    requiredAmount: 2
+    currentAmount: 0
+  - itemName: "\uC190\uC804\uB4F1"
+    requiredAmount: 2
+    currentAmount: 0
+  - itemName: "\uCF5C\uB77C"
+    requiredAmount: 2
+    currentAmount: 0
+  - itemName: "\uCD08\uBC25"
+    requiredAmount: 1
+    currentAmount: 0
   playerInventory: {fileID: 797148431}
 --- !u!4 &87829222
 Transform:
@@ -3025,6 +3047,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &87829223
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87829220}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41f0e5dd11dc67045a15f2c28cad3849, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shoppingListPanel: {fileID: 675062133}
+  itemListText: {fileID: 1117842606}
+  listManager: {fileID: 87829221}
 --- !u!1 &90304524
 GameObject:
   m_ObjectHideFlags: 0
@@ -15698,6 +15735,139 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 455559333}
   m_CullTransparentMesh: 1
+--- !u!1 &455963784
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 455963786}
+  - component: {fileID: 455963785}
+  m_Layer: 5
+  m_Name: BGM Player
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!82 &455963785
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455963784}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: bb59483c1abec4f41881b66f9c8a09d5, type: 3}
+  m_Resource: {fileID: 8300000, guid: bb59483c1abec4f41881b66f9c8a09d5, type: 3}
+  m_PlayOnAwake: 1
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!224 &455963786
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 455963784}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 960, y: 540}
+  m_SizeDelta: {x: 100, y: 100}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &458124918
 GameObject:
   m_ObjectHideFlags: 0
@@ -19202,7 +19372,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f0e5dd11dc67045a15f2c28cad3849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shoppingListUI: {fileID: 910363534}
+  shoppingListPanel: {fileID: 0}
+  itemListText: {fileID: 0}
+  listManager: {fileID: 87829221}
 --- !u!114 &571166389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22387,8 +22559,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ede93c565ee585428351f330e9d5bdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemListText: {fileID: 1117842606}
-  listManager: {fileID: 87829221}
 --- !u!1001 &675410414
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -26426,7 +26596,8 @@ MonoBehaviour:
   maxCapacity: 4
   inventoryUI: {fileID: 2131557285}
   topPanelManager: {fileID: 1938640753}
-  shoppingListManager: {fileID: 87829221}
+  shoppingListToggle: {fileID: 0}
+  dropPoint: {fileID: 0}
 --- !u!114 &797148433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -31141,8 +31312,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ede93c565ee585428351f330e9d5bdf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemListText: {fileID: 1793572789}
-  listManager: {fileID: 87829221}
 --- !u!114 &910363537
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -33841,6 +34010,7 @@ MonoBehaviour:
   itemValue: 0
   itemIcon: {fileID: 0}
   justDroppedWindow: 0.6
+  justPickedUpWindow: 0.3
 --- !u!114 &993564320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -67389,6 +67559,7 @@ MonoBehaviour:
   itemValue: 5
   itemIcon: {fileID: 0}
   justDroppedWindow: 0.6
+  justPickedUpWindow: 0.3
 --- !u!114 &1888108643
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -68122,55 +68293,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mouseSensitivitySlider: {fileID: 1700442046}
   invertYToggle: {fileID: 763877803}
-  keyBindingWidgets:
-  - action: 0
-    button: {fileID: 350893918}
-    label: {fileID: 1884650671}
-  - action: 1
-    button: {fileID: 346344879}
-    label: {fileID: 246640879}
-  - action: 2
-    button: {fileID: 2020992971}
-    label: {fileID: 1638424653}
-  - action: 3
-    button: {fileID: 1850117719}
-    label: {fileID: 1648864398}
-  - action: 4
-    button: {fileID: 524585141}
-    label: {fileID: 1263478431}
-  - action: 5
-    button: {fileID: 953884907}
-    label: {fileID: 1756049785}
-  - action: 6
-    button: {fileID: 872702263}
-    label: {fileID: 781235354}
-  - action: 13
-    button: {fileID: 1709406824}
-    label: {fileID: 840376370}
-  - action: 7
-    button: {fileID: 606609014}
-    label: {fileID: 1800697600}
-  - action: 8
-    button: {fileID: 452997540}
-    label: {fileID: 357358120}
-  - action: 9
-    button: {fileID: 1660909435}
-    label: {fileID: 1015072089}
-  - action: 10
-    button: {fileID: 760494903}
-    label: {fileID: 1937272763}
-  - action: 11
-    button: {fileID: 77207744}
-    label: {fileID: 1808997789}
-  - action: 12
-    button: {fileID: 2068147372}
-    label: {fileID: 1046474610}
-  - action: 14
-    button: {fileID: 1115360956}
-    label: {fileID: 788650907}
-  - action: 15
-    button: {fileID: 2017621555}
-    label: {fileID: 501444676}
 --- !u!114 &1908401241
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78170,6 +78292,7 @@ SceneRoots:
   - {fileID: 87829222}
   - {fileID: 2082424769}
   - {fileID: 571166392}
+  - {fileID: 455963786}
   - {fileID: 1097410177}
   - {fileID: 318796870}
   - {fileID: 892164043}

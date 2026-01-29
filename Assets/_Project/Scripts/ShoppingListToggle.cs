@@ -25,6 +25,21 @@ public class ShoppingListToggle : MonoBehaviour
                 RefreshUI();
             }
         }
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            Debug.Log("1. 탭 키 입력 감지됨!"); // 로그 출력 1
+            
+            bool nextState = !shoppingListPanel.activeSelf;
+            shoppingListPanel.SetActive(nextState);
+            
+            Debug.Log($"2. 패널 상태 변경: {nextState}"); // 로그 출력 2
+
+            if (nextState)
+            {
+                RefreshUI();
+                Debug.Log("3. UI 갱신 완료"); // 로그 출력 3
+            }
+        }
     }
 
     /// <summary>쇼핑 리스트 UI 갱신 (외부에서도 호출 가능)</summary>
