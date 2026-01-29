@@ -1,5 +1,9 @@
 using UnityEngine;
 
+/// <summary>
+/// 자동 여닫이 문 (Z축 회전)
+/// AI와 플레이어가 트리거로 열 수 있음
+/// </summary>
 public class SimpleDoor : MonoBehaviour
 {
     [Header("Door Settings")]
@@ -7,22 +11,19 @@ public class SimpleDoor : MonoBehaviour
     [SerializeField] private float closeAngle = 2.912f;
     [SerializeField] private float openSpeed = 2f;
 
-    [Header("State")]
-    public bool doorOpened = false;
-
     [Header("Auto Close")]
     [SerializeField] private bool autoClose = true;
     [SerializeField] private float autoCloseDelay = 3f;
 
-private float closeTimer = 0f;
+    public bool doorOpened = false;
 
+    private float closeTimer = 0f;
     private bool isOpening = false;
     private bool isClosing = false;
     private Quaternion targetRotation;
 
     private void Start()
     {
-        // ✅ Z축 회전값 저장
         closeAngle = transform.localEulerAngles.z;
     }
 
@@ -30,50 +31,65 @@ private float closeTimer = 0f;
     {
         if (isOpening)
         {
-            transform.localRotation = Quaternion.Slerp(
-                transform.localRotation,
-                targetRotation,
-                openSpeed * Time.deltaTime
-            );
-
-            if (Quaternion.Angle(transform.localRotation, targetRotation) < 1f)
-            {
-                transform.localRotation = targetRotation;
-                isOpening = false;
-                doorOpened = true;
-            }
+            UpdateOpening();
         }
         else if (isClosing)
         {
-            transform.localRotation = Quaternion.Slerp(
-                transform.localRotation,
-                targetRotation,
-                openSpeed * Time.deltaTime
-            );
-
-            if (Quaternion.Angle(transform.localRotation, targetRotation) < 1f)
-            {
-                transform.localRotation = targetRotation;
-                isClosing = false;
-                doorOpened = false;
-            }
+            UpdateClosing();
         }
         else if (doorOpened && autoClose)
         {
-            closeTimer += Time.deltaTime;
-            if (closeTimer >= autoCloseDelay)
-            {
-                CloseDoorNow();
-                closeTimer = 0f;
-            }
+            UpdateAutoClose();
         }
     }
 
+    private void UpdateOpening()
+    {
+        transform.localRotation = Quaternion.Slerp(
+            transform.localRotation,
+            targetRotation,
+            openSpeed * Time.deltaTime
+        );
+
+        if (Quaternion.Angle(transform.localRotation, targetRotation) < 1f)
+        {
+            transform.localRotation = targetRotation;
+            isOpening = false;
+            doorOpened = true;
+        }
+    }
+
+    private void UpdateClosing()
+    {
+        transform.localRotation = Quaternion.Slerp(
+            transform.localRotation,
+            targetRotation,
+            openSpeed * Time.deltaTime
+        );
+
+        if (Quaternion.Angle(transform.localRotation, targetRotation) < 1f)
+        {
+            transform.localRotation = targetRotation;
+            isClosing = false;
+            doorOpened = false;
+        }
+    }
+
+    private void UpdateAutoClose()
+    {
+        closeTimer += Time.deltaTime;
+        if (closeTimer >= autoCloseDelay)
+        {
+            CloseDoorNow();
+            closeTimer = 0f;
+        }
+    }
+
+    /// <summary>문 열기 (AI/플레이어 트리거에서 호출)</summary>
     public void OpenDoorNow()
     {
         if (doorOpened || isOpening) return;
 
-        // ✅ Z축으로 회전
         targetRotation = Quaternion.Euler(
             transform.localEulerAngles.x,
             transform.localEulerAngles.y,
@@ -81,13 +97,14 @@ private float closeTimer = 0f;
         );
         isOpening = true;
         isClosing = false;
+        closeTimer = 0f;
     }
 
+    /// <summary>문 닫기 (자동 닫기에서 호출)</summary>
     public void CloseDoorNow()
     {
         if (!doorOpened || isClosing) return;
 
-        // ✅ Z축으로 회전
         targetRotation = Quaternion.Euler(
             transform.localEulerAngles.x,
             transform.localEulerAngles.y,
