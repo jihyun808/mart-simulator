@@ -165,9 +165,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: "\uCD08\uBC25"
   itemSize: 1
-  itemValue: 0
+  itemValue: 6
   itemIcon: {fileID: -982994648, guid: 270a8c643e77a1041a9179e697f157ae, type: 3}
   justDroppedWindow: 0.6
+  justPickedUpWindow: 0.3
 --- !u!114 &-2556174769042971714
 MonoBehaviour:
   m_ObjectHideFlags: 0
