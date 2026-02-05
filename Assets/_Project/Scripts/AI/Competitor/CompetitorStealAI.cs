@@ -8,6 +8,9 @@ public class CompetitorStealAI : MonoBehaviour
     [SerializeField] private float stealDistance = 1.5f;
     [SerializeField] private float stealDuration = 1.0f;
 
+    private PickupableItem stolenItem;
+    [SerializeField] private Transform dropPoint;
+
     private NavMeshAgent agent;
     private CompetitorAIController controller;
 
@@ -21,19 +24,30 @@ public class CompetitorStealAI : MonoBehaviour
         controller = GetComponent<CompetitorAIController>();
 
         if (controller == null)
-        {
-            Debug.LogError("[CompetitorStealAI] Controller 없음!");
-        }
+            Debug.LogError("[CompetitorStealAI] CompetitorAIController 없음!");
     }
 
     private void Update()
     {
         if (!isStealing || targetCart == null) return;
 
-        float distance = Vector3.Distance(transform.position, targetCart.transform.position);
+        // 🔒 훔치는 도중 카트가 다시 사용되면 중단
+        if (!targetCart.IsAbandoned)
+        {
+            Debug.Log("[Steal] 카트가 다시 사용됨 → 훔치기 중단");
+            FinishSteal();
+            return;
+        }
 
+        float distance = Vector3.Distance(
+            transform.position,
+            targetCart.transform.position
+        );
+
+        // 아직 멀면 접근
         if (distance > stealDistance)
         {
+            agent.isStopped = false;
             agent.SetDestination(targetCart.transform.position);
             return;
         }
@@ -49,12 +63,18 @@ public class CompetitorStealAI : MonoBehaviour
     }
 
     // ─────────────────────────────
-    // 외부 진입 API (Controller에서 호출)
+    // 외부 API
     // ─────────────────────────────
 
     public void StartSteal(CartInventory cart)
     {
         if (cart == null) return;
+
+        if (!cart.IsAbandoned)
+        {
+            Debug.Log("[Steal] 방치되지 않은 카트 → 훔치기 취소");
+            return;
+        }
 
         targetCart = cart;
         isStealing = true;
@@ -62,6 +82,8 @@ public class CompetitorStealAI : MonoBehaviour
 
         agent.isStopped = false;
         agent.SetDestination(cart.transform.position);
+
+        Debug.Log($"[Steal] 훔치기 시작: {cart.name}");
     }
 
     public void StopSteal()
@@ -78,25 +100,67 @@ public class CompetitorStealAI : MonoBehaviour
     // 내부 로직
     // ─────────────────────────────
 
-    private void StealItem()
+   private void StealItem()
+{
+    if (targetCart == null)
     {
-        if (targetCart.StoredCount <= 0)
-        {
-            FinishSteal();
-            return;
-        }
-
-        // ✅ 카트에서 아이템 하나 제거
-        targetCart.TryTakeOutToHand(transform);
-
-        Debug.Log($"🕵️ 경쟁자가 아이템을 훔침! ({targetCart.name})");
-
         FinishSteal();
+        return;
     }
+
+    if (!targetCart.TryStealOne(out PickupableItem item))
+    {
+        Debug.Log("[Steal] 훔칠 아이템 없음");
+        FinishSteal();
+        return;
+    }
+
+    stolenItem = item;
+
+    // 훔친 즉시 월드에서 숨김 (들고 다니는 연출 X)
+    stolenItem.gameObject.SetActive(false);
+
+    Debug.Log($"🕵️ 경쟁자가 아이템 훔침: {stolenItem.name}");
+
+    FinishSteal();
+}
+
+
+    public void DropStolenItem()
+{
+    if (stolenItem == null)
+        return;
+
+    stolenItem.gameObject.SetActive(true);
+
+    Vector3 dropPos = dropPoint != null
+        ? dropPoint.position
+        : transform.position + transform.forward * 0.5f + Vector3.up * 0.5f;
+
+    stolenItem.transform.position = dropPos;
+
+    Rigidbody rb = stolenItem.GetComponent<Rigidbody>();
+    if (rb != null)
+    {
+        rb.isKinematic = false;
+        rb.useGravity = true;
+        rb.AddForce(Vector3.up * 2f, ForceMode.Impulse);
+    }
+
+    Debug.Log($"💥 경쟁자 기절 → 아이템 드랍: {stolenItem.name}");
+
+    stolenItem = null;
+}
+
+
 
     private void FinishSteal()
     {
         StopSteal();
-        controller.ChangeState(CompetitorAIController.State.Wander);
+
+        if (controller != null)
+        {
+            controller.ChangeState(CompetitorAIController.State.Wander);
+        }
     }
 }

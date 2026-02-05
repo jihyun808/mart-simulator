@@ -1861,6 +1861,7 @@ GameObject:
   - component: {fileID: 52952843}
   - component: {fileID: 52952842}
   - component: {fileID: 52952849}
+  - component: {fileID: 52952850}
   m_Layer: 7
   m_Name: shopping cart
   m_TagString: Untagged
@@ -1903,6 +1904,8 @@ MonoBehaviour:
   justDroppedWindow: 0.6
   changeLayerWhileStored: 1
   storedLayerName: Ignore Raycast
+  abandonTime: 10
+  stealCooldown: 3
 --- !u!114 &52952843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2079,6 +2082,19 @@ MonoBehaviour:
   onCartNearbyChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &52952850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 52952841}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53bb4e06d2456d94b8f7847f49b66c30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cartMount: {fileID: 52952843}
 --- !u!1 &57187098
 GameObject:
   m_ObjectHideFlags: 0
@@ -26491,7 +26507,8 @@ MonoBehaviour:
   maxCapacity: 4
   inventoryUI: {fileID: 2131557285}
   topPanelManager: {fileID: 1938640753}
-  shoppingListManager: {fileID: 87829221}
+  shoppingListToggle: {fileID: 0}
+  dropPoint: {fileID: 0}
 --- !u!114 &797148433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -54522,6 +54539,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 14
       objectReference: {fileID: 0}
+    - target: {fileID: 3348641785564449632, guid: b97a930929a95154b85d0742ab015eb9, type: 3}
+      propertyPath: m_TagString
+      value: Competitor
+      objectReference: {fileID: 0}
     - target: {fileID: 3384716762824028169, guid: b97a930929a95154b85d0742ab015eb9, type: 3}
       propertyPath: m_Layer
       value: 14
@@ -60949,7 +60970,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8ccbe42e733fb844823ebe3eec86773, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentState: 0
+  currentState: -1
+  cartSearchInterval: 2
+  stealSearchRadius: 15
 --- !u!136 &1712759949
 CapsuleCollider:
   m_ObjectHideFlags: 0
