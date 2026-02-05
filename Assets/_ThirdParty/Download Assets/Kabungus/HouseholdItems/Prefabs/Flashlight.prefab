@@ -152,10 +152,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemName: "\uC190\uC804\uB4F1"
-  itemSize: 1
-  itemValue: 0
+  itemSize: 2
+  itemValue: 7
   itemIcon: {fileID: 2081031897, guid: 072c0b3007e7ad1448ab7681185065b6, type: 3}
   justDroppedWindow: 0.6
+  justPickedUpWindow: 0.3
 --- !u!114 &-2427310825446861696
 MonoBehaviour:
   m_ObjectHideFlags: 0

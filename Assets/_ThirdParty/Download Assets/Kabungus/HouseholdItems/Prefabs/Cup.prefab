@@ -151,11 +151,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemName: 
-  itemSize: 1
-  itemValue: 0
+  itemName: "\uD770\uAE34\uCEF5"
+  itemSize: 3
+  itemValue: 2
   itemIcon: {fileID: 1080888993, guid: a20136ed8a6d1bd4bbe89180e723c2f2, type: 3}
   justDroppedWindow: 0.6
+  justPickedUpWindow: 0.3
 --- !u!114 &-7889258441813953534
 MonoBehaviour:
   m_ObjectHideFlags: 0
