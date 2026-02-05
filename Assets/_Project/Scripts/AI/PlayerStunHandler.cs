@@ -46,6 +46,9 @@ public class PlayerStunHandler : MonoBehaviour
     {
         isStunned = true;
 
+        if (AudioManager.Instance != null)
+        AudioManager.Instance.PlaySFX(SFXType.Stun);
+        
         // ✅ 화면 암전 시작
         if (screenEffect != null)
         {

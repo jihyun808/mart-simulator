@@ -78,6 +78,9 @@ public class Inventory : MonoBehaviour
         
         item.gameObject.SetActive(false); 
 
+        if (AudioManager.Instance != null)
+        AudioManager.Instance.PlaySFX(SFXType.ItemAdd);
+
         UpdateUI(); 
         Debug.Log($"{slotIndex + 1}번 슬롯에 저장 완료!");
         return true;
@@ -122,6 +125,9 @@ public class Inventory : MonoBehaviour
                 rb.useGravity = true;
             }
         }
+        
+        if (AudioManager.Instance != null)
+        AudioManager.Instance.PlaySFX(SFXType.ItemRemove); 
         
         UpdateUI();
         return item;

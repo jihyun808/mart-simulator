@@ -1,16 +1,10 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.AI;
 
 /// <summary>
-/// NavMesh 기반 AI 직원 행동 제어
-/// 벽을 돌아서 문으로 접근하는 똑똑한 AI
-/// 
-/// [버그 수정]
-/// 1. 문 자동 열기 기능 추가
-/// 2. NavMeshObstacle 자동 처리
+/// AI 직원 행동 제어 (접근, 감시, 추격, 복귀)
+/// 플레이어의 수상한 행동을 감지하고 대응
 /// </summary>
-[RequireComponent(typeof(NavMeshAgent))]
 public class AIController : MonoBehaviour
 {
     [Header("Movement Settings")]
@@ -28,12 +22,14 @@ public class AIController : MonoBehaviour
     [Header("Watch Settings")]
     public float watchDuration = 10f;
 
+    [Header("Obstacle Avoidance")]
+    public float obstacleDetectionDistance = 1.5f;
+    public float wallAvoidanceForce = 2f;
+    public LayerMask obstacleLayerMask = -1;
+    public float smoothTurnSpeed = 5f;
+
     [Header("Stun Settings")]
     public float stunDuration = 3f;
-
-    [Header("NavMesh Settings")]
-    [SerializeField] private float stoppingDistance = 0.5f;
-    [SerializeField] private float doorDetectionRadius = 2f; // ✅ 문 감지 반경
 
     public enum AIState
     {
@@ -41,53 +37,58 @@ public class AIController : MonoBehaviour
         Approach,
         Watching,
         Chase,
-        Return
+        Return,
+        Stunning
     }
 
     private AIState currentState = AIState.Idle;
     private Vector3 homePosition;
     private Quaternion homeRotation;
     private PlayerSuspicionDetector suspicionDetector;
-    private NavMeshAgent agent;
+    private Rigidbody rb;
+    private Vector3 lastMoveDirection = Vector3.forward;
+    private float stuckTime = 0f;
+    private Vector3 lastPosition;
     private float watchTimer = 0f;
     private bool hasStunnedPlayer = false;
-    private Animator anim;
 
     private void Start()
     {
         homePosition = transform.position;
         homeRotation = transform.rotation;
-        anim = GetComponent<Animator>();
+        lastPosition = transform.position;
+        lastMoveDirection = transform.forward;
 
-        SetupNavMesh();
+        SetupPhysics();
         FindReferences();
     }
 
-    private void SetupNavMesh()
+    private void SetupPhysics()
     {
-        agent = GetComponent<NavMeshAgent>();
-        if (agent == null)
+        rb = GetComponent<Rigidbody>();
+        if (rb == null)
         {
-            agent = gameObject.AddComponent<NavMeshAgent>();
+            rb = gameObject.AddComponent<Rigidbody>();
         }
 
-        agent.speed = approachSpeed;
-        agent.angularSpeed = 120f;
-        agent.acceleration = 8f;
-        agent.stoppingDistance = stoppingDistance;
-        agent.autoBraking = true;
-        agent.obstacleAvoidanceType = ObstacleAvoidanceType.HighQualityObstacleAvoidance;
+        rb.isKinematic = true;
+        rb.useGravity = false;
+        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
 
-        // ✅ Collider 추가 (문 감지용)
         CapsuleCollider capsule = GetComponent<CapsuleCollider>();
         if (capsule == null)
         {
             capsule = gameObject.AddComponent<CapsuleCollider>();
-            capsule.center = new Vector3(0, 1, 0);
-            capsule.radius = 0.5f;
-            capsule.height = 2f;
-            capsule.isTrigger = false;
         }
+        capsule.center = new Vector3(0, 1, 0);
+        capsule.radius = 0.5f;
+        capsule.height = 2f;
+        capsule.isTrigger = false;
+
+        SphereCollider doorDetector = gameObject.AddComponent<SphereCollider>();
+        doorDetector.isTrigger = true;
+        doorDetector.radius = 2f;
+        doorDetector.center = new Vector3(0, 1f, 0);
     }
 
     private void FindReferences()
@@ -111,15 +112,9 @@ public class AIController : MonoBehaviour
 
     private void Update()
     {
-        if (hasStunnedPlayer)
-        {
-            agent.isStopped = true;
-            if (anim != null) anim.SetFloat("Speed", 0);
-            return;
-        }
+        if (hasStunnedPlayer) return;
 
-        // ✅ 매 프레임 문 체크
-        CheckAndOpenNearbyDoors();
+        UpdateMovementSound();
 
         switch (currentState)
         {
@@ -144,57 +139,28 @@ public class AIController : MonoBehaviour
         {
             CheckCatchPlayer();
         }
-        
-        UpdateAnimation();
     }
 
-    // ✅ 주변 문 자동 열기
-    private void CheckAndOpenNearbyDoors()
+    private void UpdateMovementSound()
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, doorDetectionRadius);
-        
-        foreach (Collider col in colliders)
+        if (AudioManager.Instance == null) return;
+
+        if (currentState == AIState.Chase)
         {
-            SimpleDoor door = col.GetComponent<SimpleDoor>();
-            if (door != null && !door.doorOpened)
-            {
-                door.OpenDoorNow();
-                Debug.Log($"<color=cyan>[AI] 문 열기: {col.name}</color>");
-            }
+            AudioManager.Instance.PlayLoopSFX(SFXType.AIRun);
+        }
+        else if (currentState == AIState.Approach || currentState == AIState.Return)
+        {
+            AudioManager.Instance.PlayLoopSFX(SFXType.AIWalk);
+        }
+        else
+        {
+            AudioManager.Instance.StopLoopSFX();
         }
     }
 
- private void UpdateAnimation()
-{
-    if (anim == null) return;
-
-    float currentMoveSpeed = 0f;
-    bool isChasing = (currentState == AIState.Chase); // 현재 상태가 Chase인지 확인
-
-    switch (currentState)
-    {
-        case AIState.Approach:
-            currentMoveSpeed = approachSpeed;
-            break;
-        case AIState.Watching:
-            float dist = Vector3.Distance(transform.position, player.position);
-            currentMoveSpeed = (dist > watchDistance * 1.5f || dist < watchDistance * 0.5f) ? watchSpeed : 0f;
-            break;
-        case AIState.Chase:
-            currentMoveSpeed = chaseSpeed;
-            break;
-        case AIState.Return:
-            currentMoveSpeed = returnSpeed;
-            break;
-    }
-
-    // 애니메이터에 파라미터 전달
-    anim.SetFloat("Speed", currentMoveSpeed);
-    anim.SetBool("IsChasing", isChasing); // Chase 상태일 때만 true가 됨
-}
     private void HandleIdle()
     {
-        agent.isStopped = true;
     }
 
     private void HandleApproach()
@@ -209,9 +175,7 @@ public class AIController : MonoBehaviour
             return;
         }
 
-        agent.isStopped = false;
-        agent.speed = approachSpeed;
-        agent.SetDestination(player.position);
+        MoveTowardsTarget(player.position, approachSpeed);
     }
 
     private void HandleWatching()
@@ -230,21 +194,15 @@ public class AIController : MonoBehaviour
 
         if (distanceToPlayer > watchDistance * 1.5f)
         {
-            agent.isStopped = false;
-            agent.speed = watchSpeed;
-            agent.SetDestination(player.position);
+            MoveTowardsTarget(player.position, watchSpeed);
         }
         else if (distanceToPlayer < watchDistance * 0.5f)
         {
             Vector3 awayDirection = (transform.position - player.position).normalized;
-            Vector3 retreatPosition = transform.position + awayDirection * 1f;
-            agent.isStopped = false;
-            agent.speed = watchSpeed * 0.5f;
-            agent.SetDestination(retreatPosition);
+            MoveInDirection(awayDirection, watchSpeed * 0.5f);
         }
         else
         {
-            agent.isStopped = true;
             LookAtPlayer();
         }
 
@@ -258,9 +216,7 @@ public class AIController : MonoBehaviour
     {
         if (player == null) return;
 
-        agent.isStopped = false;
-        agent.speed = chaseSpeed;
-        agent.SetDestination(player.position);
+        MoveTowardsTarget(player.position, chaseSpeed);
 
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
@@ -272,17 +228,77 @@ public class AIController : MonoBehaviour
 
     private void HandleReturn()
     {
-        agent.isStopped = false;
-        agent.speed = returnSpeed;
-        agent.SetDestination(homePosition);
+        Vector3 direction = (homePosition - transform.position).normalized;
+        direction.y = 0;
+
+        Vector3 movement = direction * returnSpeed;
+        rb.MovePosition(rb.position + movement * Time.deltaTime);
+
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, smoothTurnSpeed * Time.deltaTime));
+        }
 
         float distanceToHome = Vector3.Distance(transform.position, homePosition);
         if (distanceToHome < 1f)
         {
             currentState = AIState.Idle;
-            transform.rotation = homeRotation;
-            agent.isStopped = true;
-            Debug.Log("<color=green>[AI] 원위치 복귀 완료</color>");
+            rb.MoveRotation(homeRotation);
+        }
+    }
+
+    private void MoveTowardsTarget(Vector3 targetPosition, float speed)
+    {
+        Vector3 currentPos = transform.position;
+
+        if (Vector3.Distance(currentPos, lastPosition) < 0.1f)
+        {
+            stuckTime += Time.deltaTime;
+        }
+        else
+        {
+            stuckTime = 0f;
+            lastPosition = currentPos;
+        }
+
+        Vector3 targetDirection = (targetPosition - transform.position).normalized;
+        targetDirection.y = 0;
+
+        Vector3 finalDirection = GetSmoothAvoidanceDirection(targetDirection);
+
+        if (stuckTime > 1f)
+        {
+            finalDirection = GetRandomAvoidanceDirection();
+            stuckTime = 0f;
+        }
+
+        if (finalDirection != Vector3.zero)
+        {
+            lastMoveDirection = Vector3.Slerp(
+                lastMoveDirection,
+                finalDirection,
+                smoothTurnSpeed * Time.deltaTime
+            );
+
+            Vector3 movement = lastMoveDirection.normalized * speed;
+            rb.MovePosition(rb.position + movement * Time.deltaTime);
+
+            Quaternion targetRotation = Quaternion.LookRotation(lastMoveDirection);
+            rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, smoothTurnSpeed * Time.deltaTime));
+        }
+    }
+
+    private void MoveInDirection(Vector3 direction, float speed)
+    {
+        direction.y = 0;
+        if (direction != Vector3.zero)
+        {
+            Vector3 movement = direction * speed;
+            rb.MovePosition(rb.position + movement * Time.deltaTime);
+
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, smoothTurnSpeed * Time.deltaTime));
         }
     }
 
@@ -296,7 +312,7 @@ public class AIController : MonoBehaviour
         if (direction != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
+            rb.MoveRotation(Quaternion.Slerp(rb.rotation, targetRotation, smoothTurnSpeed * Time.deltaTime));
         }
     }
 
@@ -317,8 +333,7 @@ public class AIController : MonoBehaviour
         if (hasStunnedPlayer) return;
 
         hasStunnedPlayer = true;
-        agent.isStopped = true;
-        Debug.Log("<color=magenta>[AI] 플레이어 기절!</color>");
+        currentState = AIState.Stunning;
 
         PlayerStunHandler stunHandler = player.GetComponent<PlayerStunHandler>();
         if (stunHandler != null)
@@ -326,26 +341,24 @@ public class AIController : MonoBehaviour
             stunHandler.Stun(stunDuration);
         }
 
-        StartCoroutine(StunAndReturn());
+        StartCoroutine(StunSequence());
     }
 
-    private IEnumerator StunAndReturn()
+    private IEnumerator StunSequence()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(stunDuration);
 
-        Debug.Log("<color=yellow>[AI] 즉시 복귀 시작</color>");
-        
         hasStunnedPlayer = false;
         TransitionToReturn();
     }
 
+    /// <summary>접근 상태로 전이 (PlayerSuspicionDetector에서 호출)</summary>
     public void TransitionToApproach()
     {
         if (currentState == AIState.Idle || currentState == AIState.Return)
         {
             currentState = AIState.Approach;
             watchTimer = 0f;
-            Debug.Log("<color=green>[AI] Approach 시작</color>");
         }
     }
 
@@ -354,13 +367,11 @@ public class AIController : MonoBehaviour
         currentState = AIState.Watching;
         watchTimer = 0f;
         suspicionDetector.ResetSuspicion();
-        Debug.Log("<color=cyan>[AI] Watching 시작 (의심도 리셋)</color>");
     }
 
     private void TransitionToChase()
     {
         currentState = AIState.Chase;
-        Debug.Log("<color=red>[AI] Chase 시작!</color>");
     }
 
     private void TransitionToReturn()
@@ -368,7 +379,65 @@ public class AIController : MonoBehaviour
         currentState = AIState.Return;
         watchTimer = 0f;
         suspicionDetector.ResetSuspicion();
-        Debug.Log("<color=yellow>[AI] Return 시작</color>");
+    }
+
+    private Vector3 GetSmoothAvoidanceDirection(Vector3 targetDirection)
+    {
+        Vector3 rayStart = transform.position + Vector3.up * 0.5f;
+        float avoidanceWeight = 0f;
+        Vector3 avoidanceDirection = Vector3.zero;
+
+        if (Physics.Raycast(rayStart, targetDirection, obstacleDetectionDistance, obstacleLayerMask))
+        {
+            bool leftClear = !Physics.Raycast(rayStart, -transform.right, obstacleDetectionDistance * 0.8f, obstacleLayerMask);
+            bool rightClear = !Physics.Raycast(rayStart, transform.right, obstacleDetectionDistance * 0.8f, obstacleLayerMask);
+
+            if (leftClear && rightClear)
+            {
+                avoidanceDirection = Random.value > 0.5f ? -transform.right : transform.right;
+            }
+            else if (leftClear)
+            {
+                avoidanceDirection = -transform.right;
+            }
+            else if (rightClear)
+            {
+                avoidanceDirection = transform.right;
+            }
+            else
+            {
+                avoidanceDirection = -transform.forward * 0.5f + (Random.value > 0.5f ? -transform.right : transform.right);
+            }
+
+            avoidanceWeight = wallAvoidanceForce;
+        }
+
+        Vector3 finalDirection = (targetDirection + avoidanceDirection * avoidanceWeight).normalized;
+        return finalDirection;
+    }
+
+    private Vector3 GetRandomAvoidanceDirection()
+    {
+        return Random.value > 0.5f ? transform.right : -transform.right;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        HandleDoorInteraction(other);
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        HandleDoorInteraction(other);
+    }
+
+    private void HandleDoorInteraction(Collider other)
+    {
+        SimpleDoor door = other.GetComponent<SimpleDoor>();
+        if (door != null && !door.doorOpened)
+        {
+            door.OpenDoorNow();
+        }
     }
 
     public AIState GetCurrentState()
@@ -387,26 +456,11 @@ public class AIController : MonoBehaviour
         Gizmos.color = currentState == AIState.Chase ? Color.red : Color.gray;
         Gizmos.DrawWireSphere(transform.position, catchDistance);
 
-        // ✅ 문 감지 범위
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(transform.position, doorDetectionRadius);
-
         if (Application.isPlaying)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(homePosition, 0.5f);
             Gizmos.DrawLine(transform.position, homePosition);
-
-            NavMeshAgent agent = GetComponent<NavMeshAgent>();
-            if (agent != null && agent.hasPath)
-            {
-                Gizmos.color = Color.cyan;
-                Vector3[] path = agent.path.corners;
-                for (int i = 0; i < path.Length - 1; i++)
-                {
-                    Gizmos.DrawLine(path[i], path[i + 1]);
-                }
-            }
         }
     }
 }

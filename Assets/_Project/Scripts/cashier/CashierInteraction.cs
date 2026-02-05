@@ -38,7 +38,9 @@ public class CashierInteraction : MonoBehaviour
         // 2. 퀘스트 조건 (아이템 개수)
         if (!questChecker.HasAllRequiredItems())
         {
-            Debug.Log("❌ 필요한 아이템 부족!");
+            if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(SFXType.CashierReject);
+            
             OnItemsMissing?.Invoke();
             return;
         }
@@ -46,6 +48,9 @@ public class CashierInteraction : MonoBehaviour
         // 3. 퀘스트 조건 (예산)
         if (!questChecker.IsWithinValueLimit())
         {
+            if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(SFXType.CashierReject);
+
             Debug.Log("❌ 퀘스트 예산 초과!");
             OnValueExceeded?.Invoke();
             return;
