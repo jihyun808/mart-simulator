@@ -38,25 +38,27 @@ public class CashierInteraction : MonoBehaviour
 
         if (questChecker == null)
         {
-            Debug.LogError("❌ QuestItemChecker 연결 안됨!");
             return;
         }
 
         if (!questChecker.HasAllRequiredItems())
         {
-            Debug.Log("❌ 필요한 아이템 부족!");
+            if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(SFXType.CashierReject);
+            
             OnItemsMissing?.Invoke();
             return;
         }
 
         if (!questChecker.IsWithinValueLimit())
         {
-            Debug.Log("❌ 예산 초과!");
+            if (AudioManager.Instance != null)
+            AudioManager.Instance.PlaySFX(SFXType.CashierReject);
+
             OnValueExceeded?.Invoke();
             return;
         }
 
-        Debug.Log("✅ 계산 성공! 스테이지 클리어 가능!");
         OnQuestComplete?.Invoke();
     }
 }

@@ -131,6 +131,11 @@ public class GameManager : MonoBehaviour
         StopGame();
         SetPanelActive(pauseMenuPanel, false);
         SetPanelActive(gameOverPanel, true);
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(SFXType.GameOver);
+        }
     }
 
     /// <summary>스테이지 클리어 (기본 Stage 1)</summary>
@@ -153,6 +158,11 @@ public class GameManager : MonoBehaviour
         }
         
         SetPanelActive(clearPanel, true);
+
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySFX(SFXType.GameClear);
+        }
     }
 
     /// <summary>설정 창 열기</summary>

@@ -88,6 +88,9 @@ public class CartInventory : MonoBehaviour
         if (hideItemInScene)
             DisableForStorage(pick);
 
+        if (AudioManager.Instance != null)
+        AudioManager.Instance.PlaySFX(SFXType.ItemAdd);
+        
         Debug.Log($"[CartInventory] Stored: {pick.name} (used {CapacityUsed}/{capacityMax})");
     }
 

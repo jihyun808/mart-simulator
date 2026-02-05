@@ -47,6 +47,9 @@ public class CrushObject : MonoBehaviour
 
         hasReplaced = true;
 
+        if (AudioManager.Instance != null)
+        AudioManager.Instance.PlaySFX(SFXType.ObjectBreak);
+        
         GameObject imageObject = new GameObject("ReplacementImage");
         imageObject.transform.position = hitPoint + Vector3.up * imageHeightOffset;
         imageObject.transform.rotation = Quaternion.Euler(90, 0, 0);
