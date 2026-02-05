@@ -5,43 +5,37 @@ public class CashierInteraction : MonoBehaviour
     [Header("Quest Check")]
     [SerializeField] private QuestItemChecker questChecker;
 
+    [Header("Wallet & Inventory")]
+    public PlayerWallet playerWallet;      
+    public Inventory playerInventory;      
+
     [Header("Events")]
-    public System.Action OnQuestComplete;
-    public System.Action OnItemsMissing;
-    public System.Action OnValueExceeded;
+    public System.Action OnQuestComplete;  
+    public System.Action OnItemsMissing;   
+    public System.Action OnValueExceeded;  
+    public System.Action OnNotEnoughMoney; 
 
     private void Start()
     {
-        // GameManager만 호출 (ClearUIManager는 사용 안 함)
         OnQuestComplete += () => 
         {
-            Debug.Log("⭐⭐⭐ OnQuestComplete 실행됨!");
-            
             if (GameManager.Instance != null)
             {
-                Debug.Log("⭐ GameManager.GameClear() 호출 시작");
-                GameManager.Instance.GameClear(1); // 스테이지 1
-                Debug.Log("⭐ GameManager.GameClear() 호출 완료");
-                Debug.Log($"⭐ Time.timeScale 확인: {Time.timeScale}");
-            }
-            else
-            {
-                Debug.LogError("❌ GameManager.Instance가 NULL!");
+                GameManager.Instance.GameClear(1); 
             }
         };
     }
 
     public void TryCheckoutByClick()
     {
-        Debug.Log("🧾 계산 시도 (클릭)");
-        Debug.Log($"[Cashier] questChecker={questChecker?.gameObject.name}");
-
-        if (questChecker == null)
+        // 1. 연결 확인
+        if (questChecker == null || playerWallet == null || playerInventory == null)
         {
-            Debug.LogError("❌ QuestItemChecker 연결 안됨!");
+            Debug.LogError("❌ CashierInteraction: Inspector 연결을 확인해주세요!");
             return;
         }
 
+        // 2. 퀘스트 조건 (아이템 개수)
         if (!questChecker.HasAllRequiredItems())
         {
             Debug.Log("❌ 필요한 아이템 부족!");
@@ -49,14 +43,50 @@ public class CashierInteraction : MonoBehaviour
             return;
         }
 
+        // 3. 퀘스트 조건 (예산)
         if (!questChecker.IsWithinValueLimit())
         {
-            Debug.Log("❌ 예산 초과!");
+            Debug.Log("❌ 퀘스트 예산 초과!");
             OnValueExceeded?.Invoke();
             return;
         }
 
-        Debug.Log("✅ 계산 성공! 스테이지 클리어 가능!");
-        OnQuestComplete?.Invoke();
+        // 4. 결제 시도
+        int totalPrice = CalculateTotalPrice(); 
+        
+        if (playerWallet.TrySpendMoney(totalPrice))
+        {
+            Debug.Log($"✅ 결제 성공! -${totalPrice}");
+            ClearInventoryAfterPurchase();
+            OnQuestComplete?.Invoke();
+        }
+        else
+        {
+            Debug.Log($"❌ 내 지갑 잔액 부족! (필요: {totalPrice}, 보유: {playerWallet.currentMoney})");
+            OnNotEnoughMoney?.Invoke(); 
+        }
+    }
+
+    // ⭐ 여기가 핵심 수정 부분입니다! ⭐
+    private int CalculateTotalPrice()
+    {
+        int total = 0;
+        foreach (var item in playerInventory.GetAllItems())
+        {
+            // 팀원 코드(PickupableItem)에 있는 함수를 사용하여 값을 가져옵니다.
+            // item.price (X) -> item.GetItemValue() (O)
+            total += item.GetItemValue(); 
+        }
+        return total;
+    }
+
+    private void ClearInventoryAfterPurchase()
+    {
+        var items = playerInventory.GetAllItems();
+        foreach(var item in items)
+        {
+            playerInventory.RemoveItem(item); 
+            item.gameObject.SetActive(false); 
+        }
     }
 }

@@ -3,7 +3,7 @@ using TMPro;
 
 /// <summary>
 /// 상단 UI 관리 (타이머, 돈, 가방, 카트)
-/// 타이머 종료 시 자동으로 GameOver 호출
+/// 수정사항: 돈 계산 로직 삭제(PlayerWallet으로 이관), UI 갱신 기능만 남김
 /// </summary>
 public class TopPanelManager : MonoBehaviour
 {
@@ -19,7 +19,7 @@ public class TopPanelManager : MonoBehaviour
     public int maxCart = 30;
 
     private float currentTime;
-    private int currentMoney = 50;
+    // private int currentMoney = 50; // 삭제됨 (PlayerWallet이 관리함)
     private int currentBag = 0;
     private int currentCart = 0;
     private bool isTimeOver = false;
@@ -27,7 +27,11 @@ public class TopPanelManager : MonoBehaviour
     private void Start()
     {
         currentTime = startTime;
-        UpdateUI();
+        
+        // 초기화 (돈은 PlayerWallet이 시작할 때 UpdateMoneyDisplay를 호출해줄 것임)
+        timerText.text = startTime.ToString();
+        bagText.text = $"0/{maxBag}";
+        cartText.text = $"0/{maxCart}";
     }
 
     private void Update()
@@ -57,44 +61,24 @@ public class TopPanelManager : MonoBehaviour
         }
     }
 
-    // ========== Money 관련 ==========
+    // ========== Money 관련 (수정됨) ==========
     
-    /// <summary>현재 소지금 반환</summary>
-    public int GetCurrentBudget()
-    {
-        return currentMoney;
-    }
+    // 돈 계산 로직(Spend, AddMoney 등)은 모두 PlayerWallet.cs로 이동했습니다.
+    // 여기서는 오직 텍스트만 바꿔줍니다.
 
-    /// <summary>구매 가능 여부 확인</summary>
-    public bool CanAfford(int cost)
+    /// <summary>돈 UI 갱신 (PlayerWallet에서 호출)</summary>
+    public void UpdateMoneyDisplay(int amount)
     {
-        return currentMoney >= cost;
-    }
-
-    /// <summary>돈 소비 (성공 시 true 반환)</summary>
-    public bool Spend(int cost)
-    {
-        if (currentMoney >= cost)
+        if (moneyText != null)
         {
-            currentMoney -= cost;
-            UpdateMoneyUI();
-            return true;
+            moneyText.text = "$" + amount;
         }
-        return false;
-    }
-
-    /// <summary>돈 추가</summary>
-    public void AddMoney(int amount)
-    {
-        currentMoney += amount;
-        UpdateMoneyUI();
     }
 
     // ========== Bag & Cart 관련 ==========
     
     /// <summary>
     /// 가방 UI 업데이트 (인벤토리에서 호출)
-    /// 현재 무게와 최대 무게를 함께 표시
     /// </summary>
     public void UpdateBagDisplay(int currentWeight, int maxWeight)
     {
@@ -103,32 +87,11 @@ public class TopPanelManager : MonoBehaviour
         bagText.text = $"{currentBag}/{maxBag}";
     }
 
-    /// <summary>가방 아이템 수 증가 (단순 증가용)</summary>
-    public void AddToBag()
-    {
-        currentBag++;
-        bagText.text = $"{currentBag}/{maxBag}";
-    }
-
     /// <summary>카트 아이템 수 증가</summary>
     public void AddToCart()
     {
         currentCart++;
-        bagText.text = $"{currentCart}/{maxCart}";
-    }
-
-    // ========== UI 업데이트 헬퍼 ==========
-    
-    private void UpdateUI()
-    {
-        timerText.text = startTime.ToString();
-        UpdateMoneyUI();
-        bagText.text = $"{currentBag}/{maxBag}";
-        cartText.text = $"{currentCart}/{maxCart}";
-    }
-
-    private void UpdateMoneyUI()
-    {
-        moneyText.text = "$" + currentMoney;
+        // [버그 수정] 원래 코드에 bagText로 되어 있어서 cartText로 고쳤습니다.
+        cartText.text = $"{currentCart}/{maxCart}"; 
     }
 }
