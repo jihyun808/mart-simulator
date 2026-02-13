@@ -87,11 +87,6 @@ public class CartInteractor : MonoBehaviour
         }
     }
 
-    public bool IsCartMounted()
-{
-    return mounted != null;
-}
-
     bool FindNearestCart(out CartMount nearest)
     {
         nearest = null;
