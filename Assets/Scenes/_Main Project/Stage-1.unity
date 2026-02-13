@@ -1880,31 +1880,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d666739c29ccd1143ae5c5016acafd31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  capacityMax: 30
-  onCapacityChanged:
+  maxCapacity: 30
+  currentLoad: 0
+  itemCount: 0
+  itemContainer: {fileID: 0}
+  onCartUpdated:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: 
-        m_Mode: 0
+      - m_Target: {fileID: 87829223}
+        m_TargetAssemblyTypeName: ShoppingListToggle, Assembly-CSharp
+        m_MethodName: RefreshUI
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: 
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  itemMask:
-    serializedVersion: 2
-    m_Bits: 8
-  hideItemInScene: 1
-  justDroppedWindow: 0.6
-  changeLayerWhileStored: 1
-  storedLayerName: Ignore Raycast
-  abandonTime: 10
-  stealCooldown: 3
 --- !u!114 &52952843
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2054,7 +2048,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 186380491}
-  - {fileID: 1367016675}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -84.418, y: -47.006, z: -19.489}
 --- !u!114 &52952849
@@ -3080,9 +3073,11 @@ MonoBehaviour:
   - itemName: "\uBC14\uB098\uB098"
     requiredAmount: 1
     currentAmount: 0
+    IsComplete: 0
   - itemName: "\uCEE4\uD53C"
     requiredAmount: 1
     currentAmount: 0
+    IsComplete: 0
   playerInventory: {fileID: 797148431}
 --- !u!4 &87829222
 Transform:
@@ -7369,6 +7364,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1961601159}
+  - {fileID: 1367016675}
   m_Father: {fileID: 52952848}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &186380492
@@ -20199,13 +20195,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 571166387}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 41f0e5dd11dc67045a15f2c28cad3849, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  shoppingListPanel: {fileID: 0}
-  itemListText: {fileID: 0}
+  shoppingListPanel: {fileID: 675062133}
+  itemListText: {fileID: 1117842606}
   listManager: {fileID: 87829221}
 --- !u!114 &571166389
 MonoBehaviour:
@@ -27730,9 +27726,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c126309eb0d945248b09a2aa7c8007e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inventory: {fileID: 0}
-  stageData: {fileID: 11400000, guid: 011752943b094462db2c230ac89c8e96, type: 2}
-  playerWallet: {fileID: 0}
+  inventory: {fileID: 797148431}
+  listManager: {fileID: 87829221}
+  playerWallet: {fileID: 797148439}
 --- !u!114 &797148431
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -27848,13 +27844,25 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 128
   playerPivot: {fileID: 4012252791177756195}
-  playerHand: {fileID: 0}
+  playerHand: {fileID: 1994813215}
   onEPressedWhenNoCart:
     m_PersistentCalls:
       m_Calls: []
   onCartNearbyChanged:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &797148438
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -38618,8 +38626,8 @@ MonoBehaviour:
   settingsPanel: {fileID: 1331135994}
   clearStageText: {fileID: 0}
   mainSceneName: MainMenu
-  nextStageSceneName: Stage2
   settingsSceneName: Settings
+  bgmAudioSource: {fileID: 455963785}
 --- !u!224 &1097410177
 RectTransform:
   m_ObjectHideFlags: 0
@@ -49994,12 +50002,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1367016674}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0.000000021073426, y: -0.7071068, z: 0.000000021073426, w: 0.7071068}
+  m_LocalPosition: {x: -0.20946145, y: 3.4169102, z: -1.3314539}
+  m_LocalScale: {x: 119.41285, y: 102.456085, z: 27.238155}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 52952848}
+  m_Father: {fileID: 186380491}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1368425464
 PrefabInstance:
@@ -73105,7 +73113,6 @@ MonoBehaviour:
   cartText: {fileID: 1262237240}
   startTime: 150
   maxBag: 4
-  maxCart: 30
 --- !u!1 &1941740225
 GameObject:
   m_ObjectHideFlags: 0

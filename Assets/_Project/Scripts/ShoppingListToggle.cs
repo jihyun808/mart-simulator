@@ -2,19 +2,16 @@ using System.Text;
 using TMPro;
 using UnityEngine;
 
-/// <summary>
-/// 쇼핑 리스트 통합 관리 (토글 + UI 표시)
-/// Tab 키로 열기/닫기, 열릴 때마다 자동으로 최신 상태로 갱신
-/// </summary>
 public class ShoppingListToggle : MonoBehaviour
 {
-    [Header("UI References - Inspector에서 연결")]
+    [Header("UI References")]
     public GameObject shoppingListPanel;
     public TextMeshProUGUI itemListText;
     public ShoppingListManager listManager;
 
     private void Update()
     {
+        // 중복된 Input 코드를 하나로 합침
         if (Input.GetKeyDown(KeyCode.Tab))
         {
             bool nextState = !shoppingListPanel.activeSelf;
@@ -23,30 +20,15 @@ public class ShoppingListToggle : MonoBehaviour
             if (nextState)
             {
                 RefreshUI();
-            }
-        }
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            Debug.Log("1. 탭 키 입력 감지됨!"); // 로그 출력 1
-            
-            bool nextState = !shoppingListPanel.activeSelf;
-            shoppingListPanel.SetActive(nextState);
-            
-            Debug.Log($"2. 패널 상태 변경: {nextState}"); // 로그 출력 2
-
-            if (nextState)
-            {
-                RefreshUI();
-                Debug.Log("3. UI 갱신 완료"); // 로그 출력 3
             }
         }
     }
 
-    /// <summary>쇼핑 리스트 UI 갱신 (외부에서도 호출 가능)</summary>
     public void RefreshUI()
     {
         if (itemListText == null || listManager == null) return;
 
+        // ⭐ 여기서 매니저에게 "가방이랑 카트 다 뒤져봐!" 라고 명령함
         listManager.UpdateCheckList();
 
         StringBuilder sb = new StringBuilder();
@@ -56,12 +38,11 @@ public class ShoppingListToggle : MonoBehaviour
         foreach (var item in listManager.items)
         {
             string check = item.IsComplete ? "<color=green>✔</color>" : "□";
-            string status = $"{item.itemName} <color=yellow>({item.currentAmount}/{item.requiredAmount})</color>";
             
-            if (item.IsComplete)
-            {
-                status = $"<s>{status}</s>";
-            }
+            // 완료되면 취소선, 아니면 노란색 강조
+            string status = item.IsComplete 
+                ? $"<s>{item.itemName} ({item.currentAmount}/{item.requiredAmount})</s>"
+                : $"{item.itemName} <color=yellow>({item.currentAmount}/{item.requiredAmount})</color>";
 
             sb.AppendLine($"{check} {status}");
         }
