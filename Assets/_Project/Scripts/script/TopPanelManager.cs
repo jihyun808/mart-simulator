@@ -12,6 +12,7 @@ public class TopPanelManager : MonoBehaviour
     [Header("Settings")]
     public int startTime = 150;
     public int maxBag = 4;
+    // public int maxCart = 30; // 삭제 (개별 카트마다 용량이 다를 수 있으므로)
 
     private float currentTime;
     private bool isTimeOver = false;
@@ -23,7 +24,7 @@ public class TopPanelManager : MonoBehaviour
         
         // 초기화
         bagText.text = $"0/{maxBag}";
-        cartText.text = "0/30"; 
+        cartText.text = "0/30"; // 기본값
     }
 
     private void Update()
@@ -59,7 +60,7 @@ public class TopPanelManager : MonoBehaviour
         bagText.text = $"{currentWeight}/{maxWeight}";
     }
 
-    // ⭐ 카트 용량 업데이트
+    // ⭐ [수정됨] 카트 용량 업데이트 함수 (단순 증가 X -> 실제 값 표시 O)
     public void UpdateCartDisplay(int currentCount, int maxCapacity)
     {
         if (cartText != null)
