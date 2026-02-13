@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Stage1Data
   m_EditorClassIdentifier: 
   requirements:
-  - itemName: "\uBC14\uB098\uB098"
+  - itemName: "\uCF5C\uB77C"
     requiredCount: 1
