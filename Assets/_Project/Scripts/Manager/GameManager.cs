@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
     public static bool IsGameClear => State == GameState.Clear;
     public static bool IsGameStopped => State == GameState.GameOver || State == GameState.Clear;
 
-    [Header("UI Panels - Inspector에서 연결 필수")]
+    [Header("UI Panels")]
     [SerializeField] private GameObject pauseMenuPanel;
     [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private GameObject clearPanel;
@@ -30,6 +30,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Scene Names")]
     [SerializeField] private string mainSceneName = "MainMenu";
+    [SerializeField] private string nextStageSceneName = "Stage-2";
     [SerializeField] private string settingsSceneName = "Settings";
 
     // ⭐ [추가됨] 1. BGM 오디오 소스를 연결할 변수
