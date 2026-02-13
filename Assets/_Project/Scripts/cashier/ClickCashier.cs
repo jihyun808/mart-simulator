@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ClickCashier : MonoBehaviour
 {
@@ -13,12 +14,16 @@ public class ClickCashier : MonoBehaviour
 
     void Update()
     {
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+        {
+            return; 
+        }
         if (Input.GetMouseButtonDown(0)) // 좌클릭
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
 
-            if (Physics.Raycast(ray, out hit, 10f, cashierLayer))
+            if (Physics.Raycast(ray, out hit, 3f, cashierLayer))
 {
     Debug.Log("🎯 Raycast Hit: " + hit.collider.name);
 }
@@ -28,7 +33,7 @@ else
 }
 
             // 거리 10m, cashierLayer만 감지
-            if (Physics.Raycast(ray, out hit, 10f, cashierLayer))
+            if (Physics.Raycast(ray, out hit, 3f, cashierLayer))
             {
                 Debug.Log("캐셔 클릭됨 → " + hit.collider.name);
 

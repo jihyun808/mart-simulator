@@ -29,6 +29,8 @@ public class PickupableItem : MonoBehaviour
     private int pickupLayer;
     private int carriedLayer;
 
+    // ⭐ Outline 참조 완전 제거 (PlayerPickupController가 관리)
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -39,6 +41,8 @@ public class PickupableItem : MonoBehaviour
         pickupLayer = LayerMask.NameToLayer("PickupableItem");
         carriedLayer = LayerMask.NameToLayer("CarriedItem");
     }
+
+    // ⭐ ShowHighlight() 함수 삭제 (더 이상 필요 없음)
 
     /// <summary>아이템 집기 (손에 부착)</summary>
     public void PickUp(Transform hand)
