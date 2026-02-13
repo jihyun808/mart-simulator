@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 806831388414735677}
   - component: {fileID: 8155632537468694583}
   - component: {fileID: 206126745123972053}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bottle_Cap (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -99,7 +99,8 @@ GameObject:
   - component: {fileID: 5677702597676867917}
   - component: {fileID: 8556027059266585463}
   - component: {fileID: 299359697050718155}
-  m_Layer: 0
+  - component: {fileID: 8842504892624048077}
+  m_Layer: 3
   m_Name: bottle_4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -224,3 +225,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8842504892624048077
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4934572152393790221}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: 
+  itemSize: 2
+  itemValue: 2
+  itemIcon: {fileID: 0}
+  justDroppedWindow: 0.6
+  justPickedUpWindow: 0.3

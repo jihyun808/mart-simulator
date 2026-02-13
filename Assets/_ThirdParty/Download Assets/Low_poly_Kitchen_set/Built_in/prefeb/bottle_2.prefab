@@ -52,6 +52,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: bottle_Cap (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4d94750fa7683034fb82edcae0526145, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714256342055663129, guid: 4d94750fa7683034fb82edcae0526145, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4822158969201983393, guid: 4d94750fa7683034fb82edcae0526145, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -130,9 +138,17 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -5185498548487042238, guid: 986da2d76a4d93c46a89511e72654d02, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 986da2d76a4d93c46a89511e72654d02, type: 3}
       propertyPath: m_Name
       value: bottle_2
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 986da2d76a4d93c46a89511e72654d02, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4669702841698379405, guid: 986da2d76a4d93c46a89511e72654d02, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -155,6 +171,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 986da2d76a4d93c46a89511e72654d02, type: 3}
       insertIndex: -1
       addedObject: {fileID: -3108733876197387938}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 986da2d76a4d93c46a89511e72654d02, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3983400256400460585}
   m_SourcePrefab: {fileID: 100100000, guid: 986da2d76a4d93c46a89511e72654d02, type: 3}
 --- !u!1 &4698341649798453445 stripped
 GameObject:
@@ -182,7 +201,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 6622325991954135552, guid: 74132ce9f228d5049be60658170b0ac4, type: 3}
 --- !u!54 &-3108733876197387938
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -210,6 +229,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &-3983400256400460585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4698341649798453445}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: 
+  itemSize: 2
+  itemValue: 2
+  itemIcon: {fileID: 0}
+  justDroppedWindow: 0.6
+  justPickedUpWindow: 0.3
 --- !u!4 &5366052678283068031 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 986da2d76a4d93c46a89511e72654d02, type: 3}

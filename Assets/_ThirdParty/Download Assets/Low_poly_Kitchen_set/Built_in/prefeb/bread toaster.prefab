@@ -11,7 +11,9 @@ GameObject:
   - component: {fileID: 3998983406357422515}
   - component: {fileID: -4917716707632969321}
   - component: {fileID: -942877652134374291}
-  m_Layer: 0
+  - component: {fileID: -2391541491141791900}
+  - component: {fileID: -808466589214153796}
+  m_Layer: 3
   m_Name: bread toaster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -83,6 +85,45 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &-2391541491141791900
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4338354664449637129}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.31505015, y: 0.44249904, z: 0.67494845}
+  m_Center: {x: 0.004526973, y: 0.21157062, z: -0.008622147}
+--- !u!114 &-808466589214153796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4338354664449637129}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: 
+  itemSize: 3
+  itemValue: 10
+  itemIcon: {fileID: 0}
+  justDroppedWindow: 0.6
+  justPickedUpWindow: 0.3
 --- !u!1 &6661695342108960199
 GameObject:
   m_ObjectHideFlags: 0
@@ -94,7 +135,7 @@ GameObject:
   - component: {fileID: 8878723427289747048}
   - component: {fileID: 7351216744056574342}
   - component: {fileID: 4904496390879738871}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bread toaster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
