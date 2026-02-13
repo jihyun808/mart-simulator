@@ -32,6 +32,10 @@ public class GameManager : MonoBehaviour
     [SerializeField] private string mainSceneName = "MainMenu";
     [SerializeField] private string settingsSceneName = "Settings";
 
+    // ⭐ [추가됨] 1. BGM 오디오 소스를 연결할 변수
+    [Header("Audio Settings")]
+    public AudioSource bgmAudioSource; 
+
     private void Awake()
     {
         if (Instance == null)
@@ -132,6 +136,12 @@ public class GameManager : MonoBehaviour
         SetPanelActive(pauseMenuPanel, false);
         SetPanelActive(gameOverPanel, true);
 
+        // ⭐ [추가됨] 2. 게임 오버 시 BGM 끄기
+        if (bgmAudioSource != null)
+        {
+            bgmAudioSource.Stop();
+        }
+
         if (AudioManager.Instance != null)
         {
             AudioManager.Instance.PlaySFX(SFXType.GameOver);
@@ -158,6 +168,12 @@ public class GameManager : MonoBehaviour
         }
         
         SetPanelActive(clearPanel, true);
+
+        // ⭐ [추가됨] 3. 게임 클리어 시 BGM 끄기
+        if (bgmAudioSource != null)
+        {
+            bgmAudioSource.Stop();
+        }
 
         if (AudioManager.Instance != null)
         {

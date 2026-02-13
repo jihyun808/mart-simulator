@@ -1,253 +1,173 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
 using UnityEngine.Events;
 
-[RequireComponent(typeof(Collider))]
 public class CartInventory : MonoBehaviour
 {
-    [Header("Capacity (Optional)")]
-    public int capacityMax = 30;
-    public int CapacityUsed { get; private set; }
-    public UnityEvent<int, int> onCapacityChanged;
+    [Header("Settings")]
+    public int maxCapacity = 30; // 0인지 꼭 확인하세요!
+    
+    [Header("Status (Read Only)")]
+    public int currentLoad = 0;  
+    public int itemCount = 0;    
 
-    [Header("Absorb Rules")]
-    public LayerMask itemMask;
+    public int StoredCount => itemCount;
+    public bool IsAbandoned => cartMount != null && !cartMount.IsMounted;
 
-    [Header("Store Behavior")]
-    public bool hideItemInScene = true;
-    public float justDroppedWindow = 0.6f;
+    [Header("References")]
+    public Transform itemContainer;
 
-    [Header("Storage Layer (Optional)")]
-    public bool changeLayerWhileStored = true;
-    public string storedLayerName = "Ignore Raycast";
+    [Space]
+    [Header("Events")]
+    public UnityEvent onCartUpdated; // 쇼핑리스트 갱신용
 
-    /* ─────────────────────────────
-     * 🔧 Abandon (방치) Settings
-     * ───────────────────────────── */
-    [Header("Abandon")]
-    [SerializeField] private float abandonTime = 10f;
-    [SerializeField] private float stealCooldown = 3f;
-    private float lastStolenTime;
-    private float lastInteractionTime;
-
-    public bool IsAbandoned =>
-        Time.time - lastInteractionTime >= abandonTime;
-    public bool CanBeStolen =>
-        IsAbandoned && Time.time - lastStolenTime >= stealCooldown;
-
-    public float AbandonRatio =>
-    Mathf.Clamp01((Time.time - lastInteractionTime) / abandonTime);
-    /* ───────────────────────────── */
-
-    private readonly Stack<PickupableItem> _stored = new();
-
-    private class SavedState
-    {
-        public bool[] colliderEnabled;
-        public bool[] rendererEnabled;
-        public bool rbKinematic;
-        public bool rbUseGravity;
-        public bool rbDetectCollisions;
-        public int originalLayer;
-    }
-
-    private readonly Dictionary<PickupableItem, SavedState> _saved = new();
-    private int _storedLayer = -1;
+    private List<PickupableItem> items = new List<PickupableItem>();
+    private CartMount cartMount;
 
     private void Awake()
     {
-
-        if (changeLayerWhileStored)
-        {
-            _storedLayer = LayerMask.NameToLayer(storedLayerName);
-            if (_storedLayer == -1)
-            {
-                Debug.LogWarning($"[CartInventory] storedLayerName='{storedLayerName}' 레이어를 찾을 수 없습니다.");
-                changeLayerWhileStored = false;
-            }
-        }
+        cartMount = GetComponentInParent<CartMount>();
+        if (itemContainer == null) itemContainer = transform;
     }
 
     private void Start()
     {
-        NotifyInteraction();
-    }
-    private void Reset()
-    {
-        var col = GetComponent<Collider>();
-        if (col) col.isTrigger = true;
+        currentLoad = 0;
+        itemCount = 0;
     }
 
-    private void OnTriggerEnter(Collider other) => TryStore(other);
-    private void OnTriggerStay(Collider other)  => TryStore(other);
-
-    /* ─────────────────────────────
-     * 🔧 Public API
-     * ───────────────────────────── */
-
-    public int StoredCount => _stored.Count;
-
-    public void NotifyInteraction()
+    // 손을 넣고 있다가 놓는 순간 감지
+    private void OnTriggerStay(Collider other)
     {
-        lastInteractionTime = Time.time;
+        PickupableItem item = other.GetComponent<PickupableItem>();
+        if (item != null && !items.Contains(item))
+        {
+            if (item.IsCarried()) return; // 아직 잡고 있으면 대기
+            AddItem(item);
+        }
     }
 
-    public bool TryTakeOutToHand(Transform hand)
+    public void AddItem(PickupableItem item)
     {
-        if (!hand || _stored.Count == 0) return false;
+        int itemSize = item.GetItemSize();
 
-        NotifyInteraction(); // 🔧 방치 타이머 리셋
+        if (currentLoad + itemSize > maxCapacity) return;
+        if (items.Contains(item)) return;
 
-        var pick = _stored.Pop();
-        ReduceCapacity(pick); // 🔧 capacity 감소 누락 보완
-
-        if (hideItemInScene)
-            RestoreAfterStorage(pick);
-
-        var controller = hand.GetComponentInParent<PlayerPickupController>();
-        if (controller != null)
-            controller.ForcePickUp(pick);
-        else
-            pick.PickUp(hand);
-
-        Debug.Log($"[CartInventory] TakeOut -> Hand: {pick.name}");
-        return true;
-    }
-
-    public bool TryStealOne(out PickupableItem stolenItem)
-    {
-        stolenItem = null;
-
-        if (_stored.Count == 0)
-            return false;
-
-        // 🔧 경쟁자 훔치기 조건은 외부에서 IsAbandoned로 체크
-        stolenItem = _stored.Pop();
-        ReduceCapacity(stolenItem);
-
-        if (hideItemInScene)
-            RestoreAfterStorage(stolenItem);
-
-        Debug.Log($"[CartInventory] ❌ Stolen: {stolenItem.name}");
-        return true;
-    }
-
-    /* ─────────────────────────────
-     * Internal
-     * ───────────────────────────── */
-
-    private void TryStore(Collider other)
-    {
-        if (((1 << other.gameObject.layer) & itemMask.value) == 0) return;
-
-        var pick = other.GetComponentInParent<PickupableItem>();
-        if (!pick) return;
-
-        if (pick.IsCarried()) return;
-        if (pick.WasJustPickedUp()) return;
-        if (!pick.WasJustDropped(justDroppedWindow)) return;
-        if (_stored.Contains(pick)) return;
-
-        int cost = GetItemCost(pick);
-        if (CapacityUsed + cost > capacityMax) return;
-
-        NotifyInteraction(); // 🔧 상호작용 갱신
-
-        pick.Drop();
-
-        _stored.Push(pick);
-        CapacityUsed += cost;
-        onCapacityChanged?.Invoke(CapacityUsed, capacityMax);
-
-        if (hideItemInScene)
-            DisableForStorage(pick);
-
-        if (AudioManager.Instance != null)
-        AudioManager.Instance.PlaySFX(SFXType.ItemAdd);
+        items.Add(item);
+        currentLoad += itemSize;
+        itemCount++;             
         
-        Debug.Log($"[CartInventory] Stored: {pick.name} (used {CapacityUsed}/{capacityMax})");
+        item.transform.SetParent(itemContainer);
+
+        // ⭐ 1. 넣을 때는 숨깁니다 (물리 충돌 방지 & 깔끔함)
+        item.gameObject.SetActive(false); 
+
+        Debug.Log($"[Cart] {item.name}(크기:{itemSize}) 담김! 용량: {currentLoad}/{maxCapacity}");
+        
+        UpdateUI();
+        onCartUpdated?.Invoke(); 
     }
 
-    private int GetItemCost(PickupableItem item)
+    public void RemoveItem(PickupableItem item)
     {
-        var carry = item.GetComponent<CarryableItem>();
-        return carry ? carry.capacityCost : 1;
-    }
-
-    private void ReduceCapacity(PickupableItem item)
-    {
-        CapacityUsed = Mathf.Max(0, CapacityUsed - GetItemCost(item));
-        onCapacityChanged?.Invoke(CapacityUsed, capacityMax);
-    }
-
-    /* ─────────────────────────────
-     * Storage Visual / Physics
-     * ───────────────────────────── */
-
-    private void DisableForStorage(PickupableItem pick)
-    {
-        if (!_saved.ContainsKey(pick))
+        if (items.Contains(item))
         {
-            var cols = pick.GetComponentsInChildren<Collider>(true);
-            var rends = pick.GetComponentsInChildren<Renderer>(true);
-            var rb = pick.GetComponent<Rigidbody>();
+            int itemSize = item.GetItemSize();
 
-            var s = new SavedState
-            {
-                colliderEnabled = new bool[cols.Length],
-                rendererEnabled = new bool[rends.Length],
-                rbKinematic = rb ? rb.isKinematic : false,
-                rbUseGravity = rb ? rb.useGravity : false,
-                rbDetectCollisions = rb ? rb.detectCollisions : false,
-                originalLayer = pick.gameObject.layer
-            };
+            items.Remove(item);
+            currentLoad -= itemSize; 
+            itemCount--;             
+            if (currentLoad < 0) currentLoad = 0;
 
-            for (int i = 0; i < cols.Length; i++) s.colliderEnabled[i] = cols[i].enabled;
-            for (int i = 0; i < rends.Length; i++) s.rendererEnabled[i] = rends[i].enabled;
-
-            _saved[pick] = s;
-        }
-
-        if (changeLayerWhileStored && _storedLayer != -1)
-            pick.gameObject.layer = _storedLayer;
-
-        foreach (var r in pick.GetComponentsInChildren<Renderer>(true))
-            r.enabled = false;
-
-        foreach (var c in pick.GetComponentsInChildren<Collider>(true))
-            c.enabled = false;
-
-        var rb2 = pick.GetComponent<Rigidbody>();
-        if (rb2)
-        {
-            rb2.isKinematic = true;
-            rb2.useGravity = false;
-            rb2.detectCollisions = false;
-            rb2.linearVelocity = Vector3.zero;
-            rb2.angularVelocity = Vector3.zero;
+            UpdateUI();
+            onCartUpdated?.Invoke();
         }
     }
 
-    private void RestoreAfterStorage(PickupableItem pick)
+    // ⭐ 2. 꺼낼 때 로직 (여기가 중요!)
+    public void TryTakeOutToHand(Transform hand)
     {
-        if (!_saved.TryGetValue(pick, out var s)) return;
+        if (items.Count == 0) return;
+        
+        // 마지막에 넣은 물건 (LIFO)
+        PickupableItem itemToTake = items[items.Count - 1];
+        
+        // A. 먼저 보이게 켭니다.
+        itemToTake.gameObject.SetActive(true);
+        
+        // B. 카트에서 분리하고 손 위치로 이동
+        itemToTake.transform.SetParent(null);
+        itemToTake.transform.position = hand.position;
+        itemToTake.transform.rotation = hand.rotation;
 
-        pick.gameObject.layer = s.originalLayer;
-
-        var cols = pick.GetComponentsInChildren<Collider>(true);
-        var rends = pick.GetComponentsInChildren<Renderer>(true);
-        var rb2 = pick.GetComponent<Rigidbody>();
-
-        for (int i = 0; i < cols.Length; i++) cols[i].enabled = s.colliderEnabled[i];
-        for (int i = 0; i < rends.Length; i++) rends[i].enabled = s.rendererEnabled[i];
-
-        if (rb2)
+        // C. 리스트에서 데이터 삭제
+        RemoveItem(itemToTake);
+        
+        // D. 물리 상태 복구 (숨겨져 있을 때 꺼졌던 물리를 다시 켬)
+        Rigidbody rb = itemToTake.GetComponent<Rigidbody>();
+        if (rb != null)
         {
-            rb2.isKinematic = s.rbKinematic;
-            rb2.useGravity = s.rbUseGravity;
-            rb2.detectCollisions = s.rbDetectCollisions;
+            rb.isKinematic = false;
+            rb.linearVelocity = Vector3.zero; // 튀어나감 방지
         }
 
-        _saved.Remove(pick);
+        // E. 플레이어 손에 쥐어주기 시도
+        var pickupController = hand.GetComponentInParent<PlayerPickupController>();
+        if (pickupController != null) 
+        {
+            pickupController.ForcePickUp(itemToTake);
+        }
+        else 
+        {
+            // 컨트롤러 없으면 그냥 손 위치에서 PickUp 실행
+            itemToTake.PickUp(hand);
+        }
+        
+        Debug.Log($"[Cart] {itemToTake.name} 꺼냄!");
+    }
+
+    public bool TryStealOne(out PickupableItem item)
+    {
+        item = null;
+        if (items.Count == 0) return false;
+        
+        item = items[items.Count - 1];
+        item.gameObject.SetActive(true); // 훔칠 때도 보이게 켜줌
+        
+        RemoveItem(item); 
+        item.transform.SetParent(null);
+
+        Rigidbody rb = item.GetComponent<Rigidbody>();
+        if(rb) rb.isKinematic = false;
+
+        return true;
+    }
+    
+    public List<PickupableItem> GetAllItems() => items;
+
+    public void ClearCart()
+    {
+        foreach (var item in new List<PickupableItem>(items))
+        {
+            // 결제 후 완전히 제거 (삭제하거나 풀링)
+            // 여기선 리스트에서만 빼고 비활성화 유지
+        }
+        items.Clear();
+        currentLoad = 0;
+        itemCount = 0;
+        UpdateUI();
+        onCartUpdated?.Invoke();
+    }
+
+    public int GetCurrentCount() => currentLoad; 
+
+    private void UpdateUI()
+    {
+        var topPanel = FindObjectOfType<TopPanelManager>();
+        if (topPanel != null)
+        {
+            topPanel.UpdateCartDisplay(currentLoad, maxCapacity);
+        }
     }
 }

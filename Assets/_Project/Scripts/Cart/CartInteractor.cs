@@ -6,9 +6,11 @@ public class CartInteractor : MonoBehaviour
 {
     [Header("Interaction Settings")]
     public float useDistance = 3f;
-    public LayerMask cartMask;          // 카트 레이어
-    public Transform playerPivot;       // 탐색 기준 (카메라/몸)
-    public Transform playerHand;        // ✅ 우클릭 꺼내기용 손 Transform
+    public LayerMask cartMask;       
+    public Transform playerPivot;    
+    
+    // ⭐ [필수 연결] 물건이 나올 위치 (플레이어 손)
+    public Transform playerHand;     
 
     [Header("Fallback when no cart nearby")]
     public UnityEvent onEPressedWhenNoCart;
@@ -21,7 +23,6 @@ public class CartInteractor : MonoBehaviour
 
     void Update()
     {
-        // 0) 근처 카트 탐색
         bool nowNearby = FindNearestCart(out CartMount nearest);
         if (nowNearby != cartNearby)
         {
@@ -43,31 +44,46 @@ public class CartInteractor : MonoBehaviour
             {
                 nearest.Mount(playerPivot);
                 mounted = nearest;
+
+                // 잡은 카트 정보로 UI 갱신
+                CartInventory cartInv = nearest.GetComponentInChildren<CartInventory>();
+                if (cartInv != null)
+                {
+                    var topPanel = FindObjectOfType<TopPanelManager>();
+                    if (topPanel != null)
+                    {
+                        topPanel.UpdateCartDisplay(cartInv.GetCurrentCount(), cartInv.maxCapacity);
+                    }
+                }
                 Debug.Log("[CartInteractor] Mounted cart: " + nearest.name);
                 return;
             }
-
             onEPressedWhenNoCart?.Invoke();
         }
 
-        // 2) 우클릭: 카트에서 아이템 꺼내기 (카트를 잡고 있을 때만)
+        // 2) 우클릭: 카트에서 아이템 꺼내기
         if (Mouse.current != null && Mouse.current.rightButton.wasPressedThisFrame)
         {
-            if (mounted == null) return;
-            if (!playerHand)
+            if (mounted == null) return; // 잡고 있는 카트가 없으면 무시
+
+            if (playerHand == null)
             {
-                Debug.LogWarning("[CartInteractor] playerHand is not assigned.");
+                Debug.LogError("🚨 [오류] PlayerHand가 연결되지 않았습니다! Inspector에서 할당해주세요.");
                 return;
             }
 
             var inv = mounted.GetComponentInChildren<CartInventory>(true);
-            if (!inv)
-            {
-                Debug.LogWarning("[CartInteractor] CartInventory not found under mounted cart.");
-                return;
-            }
+            if (!inv) return;
 
+            // ⭐ 카트에게 '내 손 위치'를 주면서 꺼내달라고 요청
             inv.TryTakeOutToHand(playerHand);
+            
+            // UI 갱신 (꺼냈으니까 용량 변경)
+            var topPanel = FindObjectOfType<TopPanelManager>();
+            if (topPanel != null)
+            {
+                topPanel.UpdateCartDisplay(inv.GetCurrentCount(), inv.maxCapacity);
+            }
         }
     }
 
