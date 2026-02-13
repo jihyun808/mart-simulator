@@ -68,9 +68,17 @@ PrefabInstance:
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: a2d568af9f79cc8428922ccd5099012c, type: 2}
+    - target: {fileID: -5295529118750458309, guid: f5e0813d4d4b19f4780f0d1be659c700, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: f5e0813d4d4b19f4780f0d1be659c700, type: 3}
       propertyPath: m_Name
       value: glass_cup
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f5e0813d4d4b19f4780f0d1be659c700, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -82,6 +90,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f5e0813d4d4b19f4780f0d1be659c700, type: 3}
       insertIndex: -1
       addedObject: {fileID: 466544322982933956}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: f5e0813d4d4b19f4780f0d1be659c700, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6579406163346649409}
   m_SourcePrefab: {fileID: 100100000, guid: f5e0813d4d4b19f4780f0d1be659c700, type: 3}
 --- !u!1 &1582241818902888169 stripped
 GameObject:
@@ -109,7 +120,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: -6561312392878671803, guid: f5e0813d4d4b19f4780f0d1be659c700, type: 3}
 --- !u!54 &466544322982933956
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -137,3 +148,21 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &6579406163346649409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1582241818902888169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: 
+  itemSize: 1
+  itemValue: 0
+  itemIcon: {fileID: 0}
+  justDroppedWindow: 0.6
+  justPickedUpWindow: 0.3

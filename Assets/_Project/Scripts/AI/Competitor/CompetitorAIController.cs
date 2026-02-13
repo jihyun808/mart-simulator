@@ -15,7 +15,9 @@ public class CompetitorAIController : MonoBehaviour
 
     private CompetitorWanderAI wanderAI;
     private CompetitorStealAI stealAI;
+    private CompetitorAnimatorController anim;
 
+    private CompetitorStunIndicator stunIndicator;
     [Header("Cart Search")]
     [SerializeField] private float cartSearchInterval = 2.0f;
     [SerializeField] private float stealSearchRadius = 15f;
@@ -32,21 +34,22 @@ public class CompetitorAIController : MonoBehaviour
     {
         wanderAI = GetComponent<CompetitorWanderAI>();
         stealAI  = GetComponent<CompetitorStealAI>();
+        anim     = GetComponent<CompetitorAnimatorController>();
+        stunIndicator = GetComponent<CompetitorStunIndicator>();
 
+        if (anim == null)
+            Debug.LogError("[CompetitorAIController] AnimatorController 없음");
         if (wanderAI == null)
             Debug.LogError("[CompetitorAIController] CompetitorWanderAI 없음");
-
         if (stealAI == null)
             Debug.LogError("[CompetitorAIController] CompetitorStealAI 없음");
     }
 
     private void Start()
     {
-        // ⚠️ ChangeState 사용하지 않음 (과거 버그 방지)
+        // ⚠️ 과거 버그 방지: ChangeState 사용 안 함
         currentState = State.Wander;
         EnterState(State.Wander);
-
-        StartCartSearch();
     }
 
     /* ─────────────────────────────
@@ -65,29 +68,37 @@ public class CompetitorAIController : MonoBehaviour
         EnterState(currentState);
     }
 
-    private void EnterState(State state)
+        private void EnterState(State state)
+{
+    Debug.Log($"[FSM] EnterState: {state}");
+
+    switch (state)
     {
-        Debug.Log($"[FSM] EnterState: {state}");
+        case State.Wander:
+            anim?.SetStunned(false);
+            anim?.SetWalking(true);
+            wanderAI?.StartWander();
+            StartCartSearch();
+            break;
 
-        switch (state)
-        {
-            case State.Wander:
-                wanderAI?.StartWander();
-                StartCartSearch();
-                break;
+        case State.Steal:
+            anim?.SetStunned(false);
+            anim?.SetWalking(true);
+            StopCartSearch();
+            break;
 
-            case State.Steal:
-                StopCartSearch();
-                // 실제 이동은 RequestSteal에서 시작
-                break;
+        case State.Stunned:
+            anim?.SetWalking(false);
+            anim?.SetStunned(true);
 
-            case State.Stunned:
-                wanderAI?.StopWander();
-                stealAI?.StopSteal();
-                StopCartSearch();
-                break;
-        }
+            wanderAI?.StopWander();
+            stealAI?.StopSteal();
+            StopCartSearch();
+            break;
     }
+}
+
+
 
     private void ExitState(State state)
     {
@@ -95,10 +106,15 @@ public class CompetitorAIController : MonoBehaviour
         {
             case State.Wander:
                 wanderAI?.StopWander();
+                anim?.SetWalking(false);
                 break;
 
             case State.Steal:
                 stealAI?.StopSteal();
+                break;
+
+            case State.Stunned:
+                anim?.SetStunned(false);
                 break;
         }
     }
@@ -190,8 +206,7 @@ public class CompetitorAIController : MonoBehaviour
 
     ChangeState(State.Stunned);
 
-    // 🔥 훔친 아이템 드랍
-    stealAI?.DropStolenItem();
+    stunIndicator?.Show();   // 🔥 여기 추가
 
     if (stunCoroutine != null)
         StopCoroutine(stunCoroutine);
@@ -199,17 +214,17 @@ public class CompetitorAIController : MonoBehaviour
     stunCoroutine = StartCoroutine(StunRoutine());
 }
 
+
     private IEnumerator StunRoutine()
-    {
-        Debug.Log("[Competitor] 기절!");
+{
+    yield return new WaitForSeconds(stunDuration);
 
-        yield return new WaitForSeconds(stunDuration);
+    stunIndicator?.Hide();   // 🔥 여기 추가
 
-        Debug.Log("[Competitor] 기절 회복");
-        stunCoroutine = null;
+    stunCoroutine = null;
+    ChangeState(State.Wander);
+}
 
-        ChangeState(State.Wander);
-    }
 
     public State GetCurrentState() => currentState;
 }
