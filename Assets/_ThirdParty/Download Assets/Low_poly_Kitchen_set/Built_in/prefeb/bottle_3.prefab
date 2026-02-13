@@ -72,6 +72,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: bottle_3
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: daf28fa9ca10eaf428e19154648612b0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3757645438566094553, guid: daf28fa9ca10eaf428e19154648612b0, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -85,6 +93,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: daf28fa9ca10eaf428e19154648612b0, type: 3}
       insertIndex: -1
       addedObject: {fileID: -7946869065067721692}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: daf28fa9ca10eaf428e19154648612b0, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8994841772111743447}
   m_SourcePrefab: {fileID: 100100000, guid: daf28fa9ca10eaf428e19154648612b0, type: 3}
 --- !u!4 &8549804627460216063 stripped
 Transform:
@@ -117,7 +128,7 @@ MeshCollider:
   serializedVersion: 5
   m_Convex: 1
   m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: -6847659570808721077, guid: daf28fa9ca10eaf428e19154648612b0, type: 3}
 --- !u!54 &-7946869065067721692
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -145,6 +156,24 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &8994841772111743447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9073858994488053317}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bea75bb4b3ac594dafa8e2447332d19, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemName: 
+  itemSize: 2
+  itemValue: 2
+  itemIcon: {fileID: 0}
+  justDroppedWindow: 0.6
+  justPickedUpWindow: 0.3
 --- !u!1001 &8684919679079718458
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -196,6 +225,14 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 4d94750fa7683034fb82edcae0526145, type: 3}
       propertyPath: m_Name
       value: bottle_Cap (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4d94750fa7683034fb82edcae0526145, type: 3}
+      propertyPath: m_Layer
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714256342055663129, guid: 4d94750fa7683034fb82edcae0526145, type: 3}
+      propertyPath: m_Layer
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4822158969201983393, guid: 4d94750fa7683034fb82edcae0526145, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'

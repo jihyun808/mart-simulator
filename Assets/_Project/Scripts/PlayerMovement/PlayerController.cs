@@ -21,7 +21,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.GameIsPaused || GameManager.IsGameOver) return;
+        if (GameManager.GameIsPaused || GameManager.IsGameOver || GameManager.IsGameClear) return;
 
         UpdateRotate();
         UpdateMove();
