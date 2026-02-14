@@ -6,22 +6,31 @@ public class CompetitorAnimatorController : MonoBehaviour
     private Animator animator;
     private NavMeshAgent agent;
 
-    private static readonly int IsWalking = Animator.StringToHash("IsWalking");
+    private static readonly int MoveSpeed = Animator.StringToHash("MoveSpeed");
     private static readonly int IsStunned = Animator.StringToHash("IsStunned");
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
         agent = GetComponent<NavMeshAgent>();
+
+        if (!animator)
+            Debug.LogError("[CompetitorAnimatorController] Animator 없음");
     }
 
-    // 🚶 이동 중
-    public void SetWalking(bool value)
+    /* ─────────────────────────────
+     * 🔥 Blend Tree 이동 제어
+     * ───────────────────────────── */
+
+    public void SetMoveSpeed(float value)
     {
-        animator.SetBool(IsWalking, value);
+        animator.SetFloat(MoveSpeed, value);
     }
 
-    // 🥴 기절 상태
+    /* ─────────────────────────────
+     * 🔥 Stun 제어
+     * ───────────────────────────── */
+
     public void SetStunned(bool value)
     {
         animator.SetBool(IsStunned, value);
@@ -30,15 +39,12 @@ public class CompetitorAnimatorController : MonoBehaviour
 
         if (value)
         {
-            // 🔥 핵심: 애니메이션이 위치를 못 건드리게 함
             agent.isStopped = true;
-            agent.updatePosition = false;
-            agent.updateRotation = false;
+            agent.updatePosition = true;
+            agent.updateRotation = true;
         }
         else
         {
-            agent.updatePosition = true;
-            agent.updateRotation = true;
             agent.isStopped = false;
         }
     }

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class CompetitorAIController : MonoBehaviour
 {
@@ -11,13 +12,14 @@ public class CompetitorAIController : MonoBehaviour
     }
 
     [Header("Current State (Debug)")]
-    [SerializeField] private State currentState = (State)(-1);
+    [SerializeField] private State currentState = State.Wander;
 
     private CompetitorWanderAI wanderAI;
     private CompetitorStealAI stealAI;
     private CompetitorAnimatorController anim;
-
     private CompetitorStunIndicator stunIndicator;
+    private NavMeshAgent agent;
+
     [Header("Cart Search")]
     [SerializeField] private float cartSearchInterval = 2.0f;
     [SerializeField] private float stealSearchRadius = 15f;
@@ -28,28 +30,33 @@ public class CompetitorAIController : MonoBehaviour
 
     private CartInventory targetCart;
 
+    // 🔥 Blend 안정 변수
+    private float currentMoveSpeed = 0f;
+
     /* ───────────────────────────── */
 
     private void Awake()
     {
         wanderAI = GetComponent<CompetitorWanderAI>();
-        stealAI  = GetComponent<CompetitorStealAI>();
-        anim     = GetComponent<CompetitorAnimatorController>();
+        stealAI = GetComponent<CompetitorStealAI>();
+        anim = GetComponent<CompetitorAnimatorController>();
         stunIndicator = GetComponent<CompetitorStunIndicator>();
+        agent = GetComponent<NavMeshAgent>();
 
-        if (anim == null)
-            Debug.LogError("[CompetitorAIController] AnimatorController 없음");
-        if (wanderAI == null)
-            Debug.LogError("[CompetitorAIController] CompetitorWanderAI 없음");
-        if (stealAI == null)
-            Debug.LogError("[CompetitorAIController] CompetitorStealAI 없음");
+        if (!wanderAI) Debug.LogError("[CompetitorAI] WanderAI 없음");
+        if (!stealAI) Debug.LogError("[CompetitorAI] StealAI 없음");
+        if (!anim) Debug.LogError("[CompetitorAI] AnimatorController 없음");
+        if (!agent) Debug.LogError("[CompetitorAI] NavMeshAgent 없음");
     }
 
     private void Start()
     {
-        // ⚠️ 과거 버그 방지: ChangeState 사용 안 함
-        currentState = State.Wander;
         EnterState(State.Wander);
+    }
+
+    private void Update()
+    {
+        UpdateMovementAnimation();
     }
 
     /* ─────────────────────────────
@@ -61,76 +68,93 @@ public class CompetitorAIController : MonoBehaviour
         if (currentState == newState)
             return;
 
-        Debug.Log($"[CompetitorAI] State: {currentState} -> {newState}");
-
         ExitState(currentState);
         currentState = newState;
         EnterState(currentState);
     }
 
-        private void EnterState(State state)
-{
-    Debug.Log($"[FSM] EnterState: {state}");
-
-    switch (state)
+    private void EnterState(State state)
     {
-        case State.Wander:
-            anim?.SetStunned(false);
-            anim?.SetWalking(true);
-            wanderAI?.StartWander();
-            StartCartSearch();
-            break;
+        switch (state)
+        {
+            case State.Wander:
+                anim.SetStunned(false);
+                wanderAI.StartWander();
+                StartCartSearch();
+                break;
 
-        case State.Steal:
-            anim?.SetStunned(false);
-            anim?.SetWalking(true);
-            StopCartSearch();
-            break;
+            case State.Steal:
+                anim.SetStunned(false);
+                StopCartSearch();
+                break;
 
-        case State.Stunned:
-            anim?.SetWalking(false);
-            anim?.SetStunned(true);
-
-            wanderAI?.StopWander();
-            stealAI?.StopSteal();
-            StopCartSearch();
-            break;
+            case State.Stunned:
+                anim.SetStunned(true);
+                wanderAI.StopWander();
+                stealAI.StopSteal();
+                StopCartSearch();
+                agent.isStopped = true;
+                break;
+        }
     }
-}
-
-
 
     private void ExitState(State state)
     {
         switch (state)
         {
             case State.Wander:
-                wanderAI?.StopWander();
-                anim?.SetWalking(false);
+                wanderAI.StopWander();
                 break;
 
             case State.Steal:
-                stealAI?.StopSteal();
+                stealAI.StopSteal();
                 break;
 
             case State.Stunned:
-                anim?.SetStunned(false);
+                anim.SetStunned(false);
+                agent.isStopped = false;
                 break;
         }
     }
 
     /* ─────────────────────────────
-     * 방치 카트 탐색 (Invoke 관리)
+     * 🔥 이동 애니메이션 (Blend Tree 안정화)
+     * ───────────────────────────── */
+
+    private void UpdateMovementAnimation()
+    {
+        if (currentState == State.Stunned)
+        {
+            currentMoveSpeed = 0f;
+            anim.SetMoveSpeed(0f);
+            return;
+        }
+
+        float rawSpeed = agent.velocity.magnitude;
+
+        // 🔥 1. Dead Zone (미세 흔들림 제거)
+        if (rawSpeed < 0.1f)
+            rawSpeed = 0f;
+
+        // 🔥 2. 0~1 정규화
+        float targetSpeed = 0f;
+        if (agent.speed > 0f)
+            targetSpeed = Mathf.Clamp01(rawSpeed / agent.speed);
+
+        // 🔥 3. 부드럽게 보간 (튐 방지)
+        currentMoveSpeed = Mathf.Lerp(currentMoveSpeed, targetSpeed, Time.deltaTime * 8f);
+
+        anim.SetMoveSpeed(currentMoveSpeed);
+    }
+
+    /* ─────────────────────────────
+     * Cart 탐색
      * ───────────────────────────── */
 
     private void StartCartSearch()
     {
         CancelInvoke(nameof(SearchForAbandonedCart));
-        InvokeRepeating(
-            nameof(SearchForAbandonedCart),
-            1f,
-            cartSearchInterval
-        );
+        InvokeRepeating(nameof(SearchForAbandonedCart), 1f, cartSearchInterval);
     }
 
     private void StopCartSearch()
@@ -150,19 +174,11 @@ public class CompetitorAIController : MonoBehaviour
 
         foreach (var cart in carts)
         {
-            if (!cart.IsAbandoned)
-                continue;
+            if (!cart.IsAbandoned) continue;
+            if (cart.StoredCount <= 0) continue;
 
-            if (cart.StoredCount <= 0)
-                continue;
-
-            float dist = Vector3.Distance(
-                transform.position,
-                cart.transform.position
-            );
-
-            if (dist > stealSearchRadius)
-                continue;
+            float dist = Vector3.Distance(transform.position, cart.transform.position);
+            if (dist > stealSearchRadius) continue;
 
             if (dist < closestDist)
             {
@@ -173,7 +189,6 @@ public class CompetitorAIController : MonoBehaviour
 
         if (closest != null)
         {
-            Debug.Log($"🛒 [Competitor] 방치 카트 발견: {closest.name}");
             RequestSteal(closest);
         }
     }
@@ -184,11 +199,10 @@ public class CompetitorAIController : MonoBehaviour
 
     public void RequestSteal(CartInventory cart)
     {
-        if (cart == null) return;
+        if (!cart) return;
         if (currentState != State.Wander) return;
 
         targetCart = cart;
-
         ChangeState(State.Steal);
         stealAI.StartSteal(targetCart);
     }
@@ -200,31 +214,28 @@ public class CompetitorAIController : MonoBehaviour
     }
 
     public void Stun()
-{
-    if (currentState == State.Stunned)
-        return;
+    {
+        if (currentState == State.Stunned)
+            return;
 
-    ChangeState(State.Stunned);
+        ChangeState(State.Stunned);
+        stunIndicator?.Show();
 
-    stunIndicator?.Show();   // 🔥 여기 추가
+        if (stunCoroutine != null)
+            StopCoroutine(stunCoroutine);
 
-    if (stunCoroutine != null)
-        StopCoroutine(stunCoroutine);
-
-    stunCoroutine = StartCoroutine(StunRoutine());
-}
-
+        stunCoroutine = StartCoroutine(StunRoutine());
+    }
 
     private IEnumerator StunRoutine()
-{
-    yield return new WaitForSeconds(stunDuration);
+    {
+        yield return new WaitForSeconds(stunDuration);
 
-    stunIndicator?.Hide();   // 🔥 여기 추가
+        stunIndicator?.Hide();
+        stunCoroutine = null;
 
-    stunCoroutine = null;
-    ChangeState(State.Wander);
-}
-
+        ChangeState(State.Wander);
+    }
 
     public State GetCurrentState() => currentState;
 }

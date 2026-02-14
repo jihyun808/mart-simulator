@@ -15,47 +15,40 @@ public class CompetitorWanderAI : MonoBehaviour
     private float currentIdleTime;
     private bool isWandering = false;
 
-    private Vector3 originPosition;
-
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        originPosition = transform.position;
     }
 
     private void Update()
     {
-        if (!isWandering || !agent.enabled) return;
+        if (!isWandering || !agent.enabled)
+            return;
 
-        if (agent.remainingDistance <= agent.stoppingDistance && !agent.pathPending)
+        // 도착했을 때만 idle 시작
+        if (!agent.pathPending &&
+            (!agent.hasPath || agent.remainingDistance <= agent.stoppingDistance))
         {
             idleTimer += Time.deltaTime;
 
             if (idleTimer >= currentIdleTime)
             {
-                MoveToRandomPoint();
+                TryMoveToRandomPoint();
             }
         }
     }
 
-    // ─────────────────────────────
-    // 외부 제어 (Controller에서 호출)
-    // ─────────────────────────────
+    public void StartWander()
+    {
+        isWandering = true;
 
-public void StartWander()
-{
-    Debug.Log("[Wander] StartWander called");
-    Debug.Log($"[Wander] isOnNavMesh = {agent.isOnNavMesh}");
+        idleTimer = 0f;
+        currentIdleTime = Random.Range(idleTimeMin, idleTimeMax);
 
-    isWandering = true;
-    idleTimer = 0f;
-    currentIdleTime = Random.Range(idleTimeMin, idleTimeMax);
+        agent.isStopped = false;
 
-    agent.isStopped = false;
-    MoveToRandomPoint();
-}
-
-
+        TryMoveToRandomPoint();
+    }
 
     public void StopWander()
     {
@@ -64,27 +57,24 @@ public void StartWander()
         agent.isStopped = true;
     }
 
-    // ─────────────────────────────
-    // 내부 로직
-    // ─────────────────────────────
-
-private void MoveToRandomPoint()
-{
-    Vector3 randomPoint;
-
-    if (TryGetRandomNavMeshPoint(originPosition, wanderRadius, out randomPoint))
+    private void TryMoveToRandomPoint()
     {
-        Debug.Log($"[Wander] MoveTo {randomPoint}");
+        Vector3 randomPoint;
+
+        if (!TryGetRandomNavMeshPoint(transform.position, wanderRadius, out randomPoint))
+            return;
+
+        float dist = Vector3.Distance(transform.position, randomPoint);
+
+        // 너무 가까우면 그냥 다시 시도 (idle 유지)
+        if (dist <= 1.0f)
+            return;
+
         agent.SetDestination(randomPoint);
-    }
-    else
-    {
-        Debug.LogWarning("[Wander] Failed to find NavMesh point");
-    }
 
-    idleTimer = 0f;
-    currentIdleTime = Random.Range(idleTimeMin, idleTimeMax);
-}
+        idleTimer = 0f;
+        currentIdleTime = Random.Range(idleTimeMin, idleTimeMax);
+    }
 
     private bool TryGetRandomNavMeshPoint(Vector3 center, float radius, out Vector3 result)
     {
